@@ -1,0 +1,74 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: objrct_4005
+  m_Shader: {fileID: 4800000, guid: 53bd34172b2ec0c4b8d9ee4ff3df5b66, type: 3}
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BaseMap:
+        m_Texture: {fileID: 2800000, guid: 97412ddfaf8fe9d43923ff1ce26da264, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DissolveMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DissolveMaskMap:
+        m_Texture: {fileID: 2800000, guid: 74175072df9e09840961d6cb75166658, type: 3}
+        m_Scale: {x: 1, y: 0.2}
+        m_Offset: {x: 0, y: 0}
+    - _MaskMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TwistMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _Blend: 0
+    - _Brighten: 1
+    - _Cull: 2
+    - _Cutoff: 0
+    - _DepthTest: 1
+    - _Dissolve: 1
+    - _DissolveMaskSharpen: 0.489
+    - _DissolveMode: 0.757
+    - _DissolveSharpen: 15.91
+    - _DissolveSideWidth: 0.5
+    - _DissolveSpeed: 0
+    - _DstBlend: 10
+    - _MainClampEnabled: 0
+    - _MaskSoft: 1
+    - _MaskTwistStrength: 0
+    - _MoveToCamera: 2
+    - _SelfMask: 0
+    - _SoftParticle: 1
+    - _SoftParticlesEnabled: 0
+    - _SrcBlend: 5
+    - _TwistSpeed: 0
+    - _TwistStrength: 0
+    - _ZTest: 4
+    - _ZWrite: 0
+    m_Colors:
+    - _BaseColor: {r: 2.9960785, g: 2.9960785, b: 2.9960785, a: 1}
+    - _DissolveSideColor: {r: 1.9064786, g: 1.3518449, b: 4.8301888, a: 0}
+    - _MainClamp: {r: 0, g: 0, b: 1, a: 1}
+    - _MainSpeed: {r: 0, g: 0, b: 0, a: 0}
+  m_BuildTextureStacks: []
