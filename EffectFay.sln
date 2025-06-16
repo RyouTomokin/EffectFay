@@ -1,0 +1,45 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp.csproj", "{287f3575-557f-582d-23f6-fb3782eaf14b}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "com.xuanxuan.render.utility", "com.xuanxuan.render.utility.csproj", "{56464616-9ba8-2628-3aef-6c92acef2807}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "com.xuanxuan.nb.postprocessing", "com.xuanxuan.nb.postprocessing.csproj", "{3b2207f7-22ea-d761-8fe9-703f6f7341bc}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "com.xuanxuan.nb.shaders", "com.xuanxuan.nb.shaders.csproj", "{54086c09-d48e-43c8-2a60-55b068814faa}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "com.xuanxuan.render.utility.Editor", "com.xuanxuan.render.utility.Editor.csproj", "{f6f6e818-9822-26f1-e335-e3c7d3de1de8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "com.xuanxuan.nb.postprocessing.Editor", "com.xuanxuan.nb.postprocessing.Editor.csproj", "{d9687365-f198-5fea-cb32-eab5e98c4ce3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "com.xuanxuan.nb.shaders.Editor", "com.xuanxuan.nb.shaders.Editor.csproj", "{7802f733-3832-79fc-45cd-5ad9dd1014d5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AmplifyShaderEditor", "AmplifyShaderEditor.csproj", "{71944576-3f52-4781-934c-bac22a46d260}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{287f3575-557f-582d-23f6-fb3782eaf14b}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{287f3575-557f-582d-23f6-fb3782eaf14b}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56464616-9ba8-2628-3aef-6c92acef2807}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56464616-9ba8-2628-3aef-6c92acef2807}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3b2207f7-22ea-d761-8fe9-703f6f7341bc}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3b2207f7-22ea-d761-8fe9-703f6f7341bc}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54086c09-d48e-43c8-2a60-55b068814faa}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54086c09-d48e-43c8-2a60-55b068814faa}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{f6f6e818-9822-26f1-e335-e3c7d3de1de8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{f6f6e818-9822-26f1-e335-e3c7d3de1de8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{d9687365-f198-5fea-cb32-eab5e98c4ce3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{d9687365-f198-5fea-cb32-eab5e98c4ce3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7802f733-3832-79fc-45cd-5ad9dd1014d5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7802f733-3832-79fc-45cd-5ad9dd1014d5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71944576-3f52-4781-934c-bac22a46d260}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71944576-3f52-4781-934c-bac22a46d260}.Debug|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
