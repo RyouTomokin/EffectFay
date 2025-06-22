@@ -39,7 +39,7 @@ Shader "SinCourse/PBR简化"
 		[Toggle]_OffsetMaskTexFrequencyToOpacityMaskTex("OffsetMaskTexFrequencyToOpacityMaskTex", Float) = 0
 		[Toggle]_DitherSwitch("DitherSwitch", Float) = 0
 		_DitherBias("DitherBias", Float) = 0
-		_MaskAddBias("MaskAddBias", Float) = 0
+		_MaskAddBias("MaskAddBias", Float) = -0.5
 		_AlphaTex1("AlphaTex1", 2D) = "white" {}
 		_AlphaTex1U("AlphaTex1U", Float) = 0
 		_AlphaTex1V("AlphaTex1V", Float) = 0
@@ -377,16 +377,16 @@ Shader "SinCourse/PBR简化"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
-			half4 _MainTex_ST;
-			half4 _SecTex_ST;
+			float4 _MainTex_ST;
+			float4 _SecTex_ST;
 			float4 _MainColor;
-			half4 _NormalTex_ST;
-			half4 _OffsetMaskTex_ST;
-			half4 _OpacityMaskTex_ST;
+			float4 _NormalTex_ST;
+			float4 _OffsetMaskTex_ST;
+			float4 _OpacityMaskTex_ST;
 			float4 _AllColor;
-			half4 _DistortionTex_ST;
-			half4 _AlphaTex1_ST;
-			half4 _OffsetTex_ST;
+			float4 _DistortionTex_ST;
+			float4 _AlphaTex1_ST;
+			float4 _OffsetTex_ST;
 			half _OffsetMaskTexFrequencyToOpacityMaskTex;
 			float _OpacityMaskTexV;
 			half _OpacityMaskTexSwitch;
@@ -490,21 +490,21 @@ Shader "SinCourse/PBR简化"
 				UNITY_TRANSFER_INSTANCE_ID(input, output);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
 
-				half2 uv_OffsetTex = input.texcoord.xy * _OffsetTex_ST.xy + _OffsetTex_ST.zw;
-				half2 appendResult88 = (half2(( _OffsetTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetTexV )));
-				half2 temp_output_96_0 = ( uv_OffsetTex + appendResult88 );
-				half2 uv_DistortionTex = input.texcoord.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
-				half2 uv2_DistortionTex = input.texcoord1.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
-				half2 appendResult25 = (half2(_DistortionU , _DistortionV));
-				half3 desaturateInitialColor32 = tex2Dlod( _DistortionTex, float4( ( (( _Distortion2UV )?( uv2_DistortionTex ):( uv_DistortionTex )) + ( appendResult25 * _TimeParameters.x ) ), 0, 0.0) ).rgb;
-				half desaturateDot32 = dot( desaturateInitialColor32, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar32 = lerp( desaturateInitialColor32, desaturateDot32.xxx, 1.0 );
+				float2 uv_OffsetTex = input.texcoord.xy * _OffsetTex_ST.xy + _OffsetTex_ST.zw;
+				float2 appendResult88 = (float2(( _OffsetTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetTexV )));
+				float2 temp_output_96_0 = ( uv_OffsetTex + appendResult88 );
+				float2 uv_DistortionTex = input.texcoord.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
+				float2 uv2_DistortionTex = input.texcoord1.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
+				float2 appendResult25 = (float2(_DistortionU , _DistortionV));
+				float3 desaturateInitialColor32 = tex2Dlod( _DistortionTex, float4( ( (( _Distortion2UV )?( uv2_DistortionTex ):( uv_DistortionTex )) + ( appendResult25 * _TimeParameters.x ) ), 0, 0.0) ).rgb;
+				float desaturateDot32 = dot( desaturateInitialColor32, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar32 = lerp( desaturateInitialColor32, desaturateDot32.xxx, 1.0 );
 				half3 DistortionUV34 = desaturateVar32;
 				half DistortionIndeisty35 = _DistortionIntensity;
-				half3 lerpResult103 = lerp( half3( temp_output_96_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
-				half2 uv_OffsetMaskTex = input.texcoord.xy * _OffsetMaskTex_ST.xy + _OffsetMaskTex_ST.zw;
-				half2 appendResult99 = (half2(( _OffsetMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetMaskTexV )));
-				half4 temp_output_116_0 = ( tex2Dlod( _OffsetTex, float4( (( _OffsetTexDistortionUV )?( lerpResult103 ):( half3( temp_output_96_0 ,  0.0 ) )).xy, 0, 0.0) ) * tex2Dlod( _OffsetMaskTex, float4( ( uv_OffsetMaskTex + appendResult99 ), 0, 0.0) ) );
+				float3 lerpResult103 = lerp( float3( temp_output_96_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
+				float2 uv_OffsetMaskTex = input.texcoord.xy * _OffsetMaskTex_ST.xy + _OffsetMaskTex_ST.zw;
+				float2 appendResult99 = (float2(( _OffsetMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetMaskTexV )));
+				float4 temp_output_116_0 = ( tex2Dlod( _OffsetTex, float4( (( _OffsetTexDistortionUV )?( lerpResult103 ):( half3( temp_output_96_0 ,  0.0 ) )).xy, 0, 0.0) ) * tex2Dlod( _OffsetMaskTex, float4( ( uv_OffsetMaskTex + appendResult99 ), 0, 0.0) ) );
 				
 				output.ase_texcoord8.xyz = input.texcoord.xyz;
 				output.ase_texcoord9.xy = input.texcoord1.xy;
@@ -519,7 +519,7 @@ Shader "SinCourse/PBR简化"
 					float3 defaultVertexValue = float3(0, 0, 0);
 				#endif
 
-				float3 vertexValue = ( temp_output_116_0 * half4( input.normalOS , 0.0 ) * _VertexOffsetIntensity ).rgb;
+				float3 vertexValue = ( temp_output_116_0 * float4( input.normalOS , 0.0 ) * _VertexOffsetIntensity ).rgb;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					input.positionOS.xyz = vertexValue;
@@ -702,28 +702,28 @@ Shader "SinCourse/PBR简化"
 					ShadowCoords = TransformWorldToShadowCoord( WorldPosition );
 				#endif
 
-				half2 uv_NormalTex = input.ase_texcoord8.xyz.xy * _NormalTex_ST.xy + _NormalTex_ST.zw;
-				half2 appendResult66 = (half2(( _NormalTexU * _TimeParameters.x ) , ( _TimeParameters.x * _NormalTexV )));
-				half2 temp_output_68_0 = ( uv_NormalTex + appendResult66 );
-				half2 uv_DistortionTex = input.ase_texcoord8.xyz.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
-				half2 uv2_DistortionTex = input.ase_texcoord9.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
-				half2 appendResult25 = (half2(_DistortionU , _DistortionV));
-				half3 desaturateInitialColor32 = tex2D( _DistortionTex, ( (( _Distortion2UV )?( uv2_DistortionTex ):( uv_DistortionTex )) + ( appendResult25 * _TimeParameters.x ) ) ).rgb;
-				half desaturateDot32 = dot( desaturateInitialColor32, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar32 = lerp( desaturateInitialColor32, desaturateDot32.xxx, 1.0 );
+				float2 uv_NormalTex = input.ase_texcoord8.xyz.xy * _NormalTex_ST.xy + _NormalTex_ST.zw;
+				float2 appendResult66 = (float2(( _NormalTexU * _TimeParameters.x ) , ( _TimeParameters.x * _NormalTexV )));
+				float2 temp_output_68_0 = ( uv_NormalTex + appendResult66 );
+				float2 uv_DistortionTex = input.ase_texcoord8.xyz.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
+				float2 uv2_DistortionTex = input.ase_texcoord9.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
+				float2 appendResult25 = (float2(_DistortionU , _DistortionV));
+				float3 desaturateInitialColor32 = tex2D( _DistortionTex, ( (( _Distortion2UV )?( uv2_DistortionTex ):( uv_DistortionTex )) + ( appendResult25 * _TimeParameters.x ) ) ).rgb;
+				float desaturateDot32 = dot( desaturateInitialColor32, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar32 = lerp( desaturateInitialColor32, desaturateDot32.xxx, 1.0 );
 				half3 DistortionUV34 = desaturateVar32;
 				half DistortionIndeisty35 = _DistortionIntensity;
-				half3 lerpResult71 = lerp( half3( temp_output_68_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
-				half3 unpack74 = UnpackNormalScale( tex2D( _NormalTex, (( _NormalTexDistortionUV )?( lerpResult71 ):( half3( temp_output_68_0 ,  0.0 ) )).xy ), _NormalIntensity );
+				float3 lerpResult71 = lerp( float3( temp_output_68_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
+				float3 unpack74 = UnpackNormalScale( tex2D( _NormalTex, (( _NormalTexDistortionUV )?( lerpResult71 ):( half3( temp_output_68_0 ,  0.0 ) )).xy ), _NormalIntensity );
 				unpack74.z = lerp( 1, unpack74.z, saturate(_NormalIntensity) );
-				half3 tex2DNode74 = unpack74;
-				half3 tanToWorld0 = float3( WorldTangent.x, WorldBiTangent.x, WorldNormal.x );
-				half3 tanToWorld1 = float3( WorldTangent.y, WorldBiTangent.y, WorldNormal.y );
-				half3 tanToWorld2 = float3( WorldTangent.z, WorldBiTangent.z, WorldNormal.z );
-				half3 worldRefl37 = normalize( reflect( -WorldViewDirection, float3( dot( tanToWorld0, tex2DNode74 ), dot( tanToWorld1, tex2DNode74 ), dot( tanToWorld2, tex2DNode74 ) ) ) );
-				half2 uv_MainTex = input.ase_texcoord8.xyz.xy * _MainTex_ST.xy + _MainTex_ST.zw;
-				half2 appendResult55 = (half2(( _MainTexU * _TimeParameters.x ) , ( _TimeParameters.x * _MainTexV )));
-				half4 temp_output_48_0 = ( ( ( _CubeMapIntensity * texCUBE( _CubeMapTex, worldRefl37 ) ) + ( _MainColor * tex2D( _MainTex, ( uv_MainTex + appendResult55 ) ) ) ) * _AllColor );
+				float3 tex2DNode74 = unpack74;
+				float3 tanToWorld0 = float3( WorldTangent.x, WorldBiTangent.x, WorldNormal.x );
+				float3 tanToWorld1 = float3( WorldTangent.y, WorldBiTangent.y, WorldNormal.y );
+				float3 tanToWorld2 = float3( WorldTangent.z, WorldBiTangent.z, WorldNormal.z );
+				float3 worldRefl37 = normalize( reflect( -WorldViewDirection, float3( dot( tanToWorld0, tex2DNode74 ), dot( tanToWorld1, tex2DNode74 ), dot( tanToWorld2, tex2DNode74 ) ) ) );
+				float2 uv_MainTex = input.ase_texcoord8.xyz.xy * _MainTex_ST.xy + _MainTex_ST.zw;
+				float2 appendResult55 = (float2(( _MainTexU * _TimeParameters.x ) , ( _TimeParameters.x * _MainTexV )));
+				float4 temp_output_48_0 = ( ( ( _CubeMapIntensity * texCUBE( _CubeMapTex, worldRefl37 ) ) + ( _MainColor * tex2D( _MainTex, ( uv_MainTex + appendResult55 ) ) ) ) * _AllColor );
 				#ifdef _ALBEDOOFF_ON
 				float4 staticSwitch59 = float4( 0,0,0,0 );
 				#else
@@ -736,38 +736,38 @@ Shader "SinCourse/PBR简化"
 				float4 staticSwitch58 = float4( 0,0,0,0 );
 				#endif
 				
-				half2 uv_SecTex = input.ase_texcoord8.xyz.xy * _SecTex_ST.xy + _SecTex_ST.zw;
-				half2 appendResult18 = (half2(( _SecTexU * _TimeParameters.x ) , ( _TimeParameters.x * _SecTexV )));
-				half2 temp_output_19_0 = ( uv_SecTex + appendResult18 );
-				half3 lerpResult143 = lerp( half3( temp_output_19_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
-				half4 tex2DNode4 = tex2D( _SecTex, (( _SecTexDistortionUV )?( lerpResult143 ):( half3( temp_output_19_0 ,  0.0 ) )).xy );
+				float2 uv_SecTex = input.ase_texcoord8.xyz.xy * _SecTex_ST.xy + _SecTex_ST.zw;
+				float2 appendResult18 = (float2(( _SecTexU * _TimeParameters.x ) , ( _TimeParameters.x * _SecTexV )));
+				float2 temp_output_19_0 = ( uv_SecTex + appendResult18 );
+				float3 lerpResult143 = lerp( float3( temp_output_19_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
+				float4 tex2DNode4 = tex2D( _SecTex, (( _SecTexDistortionUV )?( lerpResult143 ):( half3( temp_output_19_0 ,  0.0 ) )).xy );
 				
-				half2 uv_OffsetTex = input.ase_texcoord8.xyz.xy * _OffsetTex_ST.xy + _OffsetTex_ST.zw;
-				half2 appendResult88 = (half2(( _OffsetTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetTexV )));
-				half2 temp_output_96_0 = ( uv_OffsetTex + appendResult88 );
-				half3 lerpResult103 = lerp( half3( temp_output_96_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
-				half2 uv_OffsetMaskTex = input.ase_texcoord8.xyz.xy * _OffsetMaskTex_ST.xy + _OffsetMaskTex_ST.zw;
-				half2 appendResult99 = (half2(( _OffsetMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetMaskTexV )));
-				half4 temp_output_116_0 = ( tex2D( _OffsetTex, (( _OffsetTexDistortionUV )?( lerpResult103 ):( half3( temp_output_96_0 ,  0.0 ) )).xy ) * tex2D( _OffsetMaskTex, ( uv_OffsetMaskTex + appendResult99 ) ) );
-				half3 desaturateInitialColor136 = temp_output_116_0.rgb;
-				half desaturateDot136 = dot( desaturateInitialColor136, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar136 = lerp( desaturateInitialColor136, desaturateDot136.xxx, 1.0 );
-				half2 uv_OpacityMaskTex = input.ase_texcoord8.xyz.xy * _OpacityMaskTex_ST.xy + _OpacityMaskTex_ST.zw;
-				half2 appendResult100 = (half2(( _OpacityMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OpacityMaskTexV )));
-				half3 desaturateInitialColor118 = tex2D( _OpacityMaskTex, (( _OffsetMaskTexFrequencyToOpacityMaskTex )?( ( appendResult99 + uv_OpacityMaskTex ) ):( ( uv_OpacityMaskTex + appendResult100 ) )) ).rgb;
-				half desaturateDot118 = dot( desaturateInitialColor118, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar118 = lerp( desaturateInitialColor118, desaturateDot118.xxx, 1.0 );
-				half2 uv_AlphaTex1 = input.ase_texcoord8.xyz.xy * _AlphaTex1_ST.xy + _AlphaTex1_ST.zw;
-				half2 appendResult113 = (half2(( _AlphaTex1U * _TimeParameters.x ) , ( _TimeParameters.x * _AlphaTex1V )));
-				half3 desaturateInitialColor120 = tex2D( _AlphaTex1, ( uv_AlphaTex1 + appendResult113 ) ).rgb;
-				half desaturateDot120 = dot( desaturateInitialColor120, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar120 = lerp( desaturateInitialColor120, desaturateDot120.xxx, 1.0 );
-				half clampResult141 = clamp( ( _MaskAddBias + ( (( _OpacityMaskTexSwitch )?( (desaturateVar118).x ):( (desaturateVar136).x )) * (desaturateVar120).x ) ) , 0.0 , 1.0 );
-				half temp_output_128_0 = (0.0 + (clampResult141 - 0.0) * (2.0 - 0.0) / (1.0 - 0.0));
-				half4 ase_positionSSNorm = ScreenPos / ScreenPos.w;
+				float2 uv_OffsetTex = input.ase_texcoord8.xyz.xy * _OffsetTex_ST.xy + _OffsetTex_ST.zw;
+				float2 appendResult88 = (float2(( _OffsetTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetTexV )));
+				float2 temp_output_96_0 = ( uv_OffsetTex + appendResult88 );
+				float3 lerpResult103 = lerp( float3( temp_output_96_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
+				float2 uv_OffsetMaskTex = input.ase_texcoord8.xyz.xy * _OffsetMaskTex_ST.xy + _OffsetMaskTex_ST.zw;
+				float2 appendResult99 = (float2(( _OffsetMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetMaskTexV )));
+				float4 temp_output_116_0 = ( tex2D( _OffsetTex, (( _OffsetTexDistortionUV )?( lerpResult103 ):( half3( temp_output_96_0 ,  0.0 ) )).xy ) * tex2D( _OffsetMaskTex, ( uv_OffsetMaskTex + appendResult99 ) ) );
+				float3 desaturateInitialColor136 = temp_output_116_0.rgb;
+				float desaturateDot136 = dot( desaturateInitialColor136, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar136 = lerp( desaturateInitialColor136, desaturateDot136.xxx, 1.0 );
+				float2 uv_OpacityMaskTex = input.ase_texcoord8.xyz.xy * _OpacityMaskTex_ST.xy + _OpacityMaskTex_ST.zw;
+				float2 appendResult100 = (float2(( _OpacityMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OpacityMaskTexV )));
+				float3 desaturateInitialColor118 = tex2D( _OpacityMaskTex, (( _OffsetMaskTexFrequencyToOpacityMaskTex )?( ( appendResult99 + uv_OpacityMaskTex ) ):( ( uv_OpacityMaskTex + appendResult100 ) )) ).rgb;
+				float desaturateDot118 = dot( desaturateInitialColor118, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar118 = lerp( desaturateInitialColor118, desaturateDot118.xxx, 1.0 );
+				float2 uv_AlphaTex1 = input.ase_texcoord8.xyz.xy * _AlphaTex1_ST.xy + _AlphaTex1_ST.zw;
+				float2 appendResult113 = (float2(( _AlphaTex1U * _TimeParameters.x ) , ( _TimeParameters.x * _AlphaTex1V )));
+				float3 desaturateInitialColor120 = tex2D( _AlphaTex1, ( uv_AlphaTex1 + appendResult113 ) ).rgb;
+				float desaturateDot120 = dot( desaturateInitialColor120, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar120 = lerp( desaturateInitialColor120, desaturateDot120.xxx, 1.0 );
+				float clampResult141 = clamp( ( _MaskAddBias + ( (( _OpacityMaskTexSwitch )?( (desaturateVar118).x ):( (desaturateVar136).x )) * (desaturateVar120).x ) ) , 0.0 , 1.0 );
+				float temp_output_128_0 = (0.0 + (clampResult141 - 0.0) * (2.0 - 0.0) / (1.0 - 0.0));
+				float4 ase_positionSSNorm = ScreenPos / ScreenPos.w;
 				ase_positionSSNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_positionSSNorm.z : ase_positionSSNorm.z * 0.5 + 0.5;
-				half4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
-				half dither131 = Dither4x4Bayer( fmod( ase_positionSS_Pixel.x, 4 ), fmod( ase_positionSS_Pixel.y, 4 ) );
+				float4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
+				float dither131 = Dither4x4Bayer( fmod( ase_positionSS_Pixel.x, 4 ), fmod( ase_positionSS_Pixel.y, 4 ) );
 				dither131 = step( dither131, saturate( ( temp_output_128_0 + _DitherBias ) * 1.00001 ) );
 				
 
@@ -1121,16 +1121,16 @@ Shader "SinCourse/PBR简化"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
-			half4 _MainTex_ST;
-			half4 _SecTex_ST;
+			float4 _MainTex_ST;
+			float4 _SecTex_ST;
 			float4 _MainColor;
-			half4 _NormalTex_ST;
-			half4 _OffsetMaskTex_ST;
-			half4 _OpacityMaskTex_ST;
+			float4 _NormalTex_ST;
+			float4 _OffsetMaskTex_ST;
+			float4 _OpacityMaskTex_ST;
 			float4 _AllColor;
-			half4 _DistortionTex_ST;
-			half4 _AlphaTex1_ST;
-			half4 _OffsetTex_ST;
+			float4 _DistortionTex_ST;
+			float4 _AlphaTex1_ST;
+			float4 _OffsetTex_ST;
 			half _OffsetMaskTexFrequencyToOpacityMaskTex;
 			float _OpacityMaskTexV;
 			half _OpacityMaskTexSwitch;
@@ -1233,21 +1233,21 @@ Shader "SinCourse/PBR简化"
 				UNITY_TRANSFER_INSTANCE_ID(input, output);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO( output );
 
-				half2 uv_OffsetTex = input.ase_texcoord.xy * _OffsetTex_ST.xy + _OffsetTex_ST.zw;
-				half2 appendResult88 = (half2(( _OffsetTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetTexV )));
-				half2 temp_output_96_0 = ( uv_OffsetTex + appendResult88 );
-				half2 uv_DistortionTex = input.ase_texcoord.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
-				half2 uv2_DistortionTex = input.ase_texcoord1.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
-				half2 appendResult25 = (half2(_DistortionU , _DistortionV));
-				half3 desaturateInitialColor32 = tex2Dlod( _DistortionTex, float4( ( (( _Distortion2UV )?( uv2_DistortionTex ):( uv_DistortionTex )) + ( appendResult25 * _TimeParameters.x ) ), 0, 0.0) ).rgb;
-				half desaturateDot32 = dot( desaturateInitialColor32, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar32 = lerp( desaturateInitialColor32, desaturateDot32.xxx, 1.0 );
+				float2 uv_OffsetTex = input.ase_texcoord.xy * _OffsetTex_ST.xy + _OffsetTex_ST.zw;
+				float2 appendResult88 = (float2(( _OffsetTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetTexV )));
+				float2 temp_output_96_0 = ( uv_OffsetTex + appendResult88 );
+				float2 uv_DistortionTex = input.ase_texcoord.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
+				float2 uv2_DistortionTex = input.ase_texcoord1.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
+				float2 appendResult25 = (float2(_DistortionU , _DistortionV));
+				float3 desaturateInitialColor32 = tex2Dlod( _DistortionTex, float4( ( (( _Distortion2UV )?( uv2_DistortionTex ):( uv_DistortionTex )) + ( appendResult25 * _TimeParameters.x ) ), 0, 0.0) ).rgb;
+				float desaturateDot32 = dot( desaturateInitialColor32, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar32 = lerp( desaturateInitialColor32, desaturateDot32.xxx, 1.0 );
 				half3 DistortionUV34 = desaturateVar32;
 				half DistortionIndeisty35 = _DistortionIntensity;
-				half3 lerpResult103 = lerp( half3( temp_output_96_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
-				half2 uv_OffsetMaskTex = input.ase_texcoord.xy * _OffsetMaskTex_ST.xy + _OffsetMaskTex_ST.zw;
-				half2 appendResult99 = (half2(( _OffsetMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetMaskTexV )));
-				half4 temp_output_116_0 = ( tex2Dlod( _OffsetTex, float4( (( _OffsetTexDistortionUV )?( lerpResult103 ):( half3( temp_output_96_0 ,  0.0 ) )).xy, 0, 0.0) ) * tex2Dlod( _OffsetMaskTex, float4( ( uv_OffsetMaskTex + appendResult99 ), 0, 0.0) ) );
+				float3 lerpResult103 = lerp( float3( temp_output_96_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
+				float2 uv_OffsetMaskTex = input.ase_texcoord.xy * _OffsetMaskTex_ST.xy + _OffsetMaskTex_ST.zw;
+				float2 appendResult99 = (float2(( _OffsetMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetMaskTexV )));
+				float4 temp_output_116_0 = ( tex2Dlod( _OffsetTex, float4( (( _OffsetTexDistortionUV )?( lerpResult103 ):( half3( temp_output_96_0 ,  0.0 ) )).xy, 0, 0.0) ) * tex2Dlod( _OffsetMaskTex, float4( ( uv_OffsetMaskTex + appendResult99 ), 0, 0.0) ) );
 				
 				output.ase_texcoord3.xy = input.ase_texcoord.xy;
 				output.ase_texcoord3.zw = input.ase_texcoord1.xy;
@@ -1258,7 +1258,7 @@ Shader "SinCourse/PBR简化"
 					float3 defaultVertexValue = float3(0, 0, 0);
 				#endif
 
-				float3 vertexValue = ( temp_output_116_0 * half4( input.normalOS , 0.0 ) * _VertexOffsetIntensity ).rgb;
+				float3 vertexValue = ( temp_output_116_0 * float4( input.normalOS , 0.0 ) * _VertexOffsetIntensity ).rgb;
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					input.positionOS.xyz = vertexValue;
 				#else
@@ -1402,40 +1402,40 @@ Shader "SinCourse/PBR简化"
 					#endif
 				#endif
 
-				half2 uv_OffsetTex = input.ase_texcoord3.xy * _OffsetTex_ST.xy + _OffsetTex_ST.zw;
-				half2 appendResult88 = (half2(( _OffsetTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetTexV )));
-				half2 temp_output_96_0 = ( uv_OffsetTex + appendResult88 );
-				half2 uv_DistortionTex = input.ase_texcoord3.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
-				half2 uv2_DistortionTex = input.ase_texcoord3.zw * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
-				half2 appendResult25 = (half2(_DistortionU , _DistortionV));
-				half3 desaturateInitialColor32 = tex2D( _DistortionTex, ( (( _Distortion2UV )?( uv2_DistortionTex ):( uv_DistortionTex )) + ( appendResult25 * _TimeParameters.x ) ) ).rgb;
-				half desaturateDot32 = dot( desaturateInitialColor32, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar32 = lerp( desaturateInitialColor32, desaturateDot32.xxx, 1.0 );
+				float2 uv_OffsetTex = input.ase_texcoord3.xy * _OffsetTex_ST.xy + _OffsetTex_ST.zw;
+				float2 appendResult88 = (float2(( _OffsetTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetTexV )));
+				float2 temp_output_96_0 = ( uv_OffsetTex + appendResult88 );
+				float2 uv_DistortionTex = input.ase_texcoord3.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
+				float2 uv2_DistortionTex = input.ase_texcoord3.zw * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
+				float2 appendResult25 = (float2(_DistortionU , _DistortionV));
+				float3 desaturateInitialColor32 = tex2D( _DistortionTex, ( (( _Distortion2UV )?( uv2_DistortionTex ):( uv_DistortionTex )) + ( appendResult25 * _TimeParameters.x ) ) ).rgb;
+				float desaturateDot32 = dot( desaturateInitialColor32, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar32 = lerp( desaturateInitialColor32, desaturateDot32.xxx, 1.0 );
 				half3 DistortionUV34 = desaturateVar32;
 				half DistortionIndeisty35 = _DistortionIntensity;
-				half3 lerpResult103 = lerp( half3( temp_output_96_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
-				half2 uv_OffsetMaskTex = input.ase_texcoord3.xy * _OffsetMaskTex_ST.xy + _OffsetMaskTex_ST.zw;
-				half2 appendResult99 = (half2(( _OffsetMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetMaskTexV )));
-				half4 temp_output_116_0 = ( tex2D( _OffsetTex, (( _OffsetTexDistortionUV )?( lerpResult103 ):( half3( temp_output_96_0 ,  0.0 ) )).xy ) * tex2D( _OffsetMaskTex, ( uv_OffsetMaskTex + appendResult99 ) ) );
-				half3 desaturateInitialColor136 = temp_output_116_0.rgb;
-				half desaturateDot136 = dot( desaturateInitialColor136, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar136 = lerp( desaturateInitialColor136, desaturateDot136.xxx, 1.0 );
-				half2 uv_OpacityMaskTex = input.ase_texcoord3.xy * _OpacityMaskTex_ST.xy + _OpacityMaskTex_ST.zw;
-				half2 appendResult100 = (half2(( _OpacityMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OpacityMaskTexV )));
-				half3 desaturateInitialColor118 = tex2D( _OpacityMaskTex, (( _OffsetMaskTexFrequencyToOpacityMaskTex )?( ( appendResult99 + uv_OpacityMaskTex ) ):( ( uv_OpacityMaskTex + appendResult100 ) )) ).rgb;
-				half desaturateDot118 = dot( desaturateInitialColor118, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar118 = lerp( desaturateInitialColor118, desaturateDot118.xxx, 1.0 );
-				half2 uv_AlphaTex1 = input.ase_texcoord3.xy * _AlphaTex1_ST.xy + _AlphaTex1_ST.zw;
-				half2 appendResult113 = (half2(( _AlphaTex1U * _TimeParameters.x ) , ( _TimeParameters.x * _AlphaTex1V )));
-				half3 desaturateInitialColor120 = tex2D( _AlphaTex1, ( uv_AlphaTex1 + appendResult113 ) ).rgb;
-				half desaturateDot120 = dot( desaturateInitialColor120, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar120 = lerp( desaturateInitialColor120, desaturateDot120.xxx, 1.0 );
-				half clampResult141 = clamp( ( _MaskAddBias + ( (( _OpacityMaskTexSwitch )?( (desaturateVar118).x ):( (desaturateVar136).x )) * (desaturateVar120).x ) ) , 0.0 , 1.0 );
-				half temp_output_128_0 = (0.0 + (clampResult141 - 0.0) * (2.0 - 0.0) / (1.0 - 0.0));
-				half4 ase_positionSSNorm = ScreenPos / ScreenPos.w;
+				float3 lerpResult103 = lerp( float3( temp_output_96_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
+				float2 uv_OffsetMaskTex = input.ase_texcoord3.xy * _OffsetMaskTex_ST.xy + _OffsetMaskTex_ST.zw;
+				float2 appendResult99 = (float2(( _OffsetMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetMaskTexV )));
+				float4 temp_output_116_0 = ( tex2D( _OffsetTex, (( _OffsetTexDistortionUV )?( lerpResult103 ):( half3( temp_output_96_0 ,  0.0 ) )).xy ) * tex2D( _OffsetMaskTex, ( uv_OffsetMaskTex + appendResult99 ) ) );
+				float3 desaturateInitialColor136 = temp_output_116_0.rgb;
+				float desaturateDot136 = dot( desaturateInitialColor136, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar136 = lerp( desaturateInitialColor136, desaturateDot136.xxx, 1.0 );
+				float2 uv_OpacityMaskTex = input.ase_texcoord3.xy * _OpacityMaskTex_ST.xy + _OpacityMaskTex_ST.zw;
+				float2 appendResult100 = (float2(( _OpacityMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OpacityMaskTexV )));
+				float3 desaturateInitialColor118 = tex2D( _OpacityMaskTex, (( _OffsetMaskTexFrequencyToOpacityMaskTex )?( ( appendResult99 + uv_OpacityMaskTex ) ):( ( uv_OpacityMaskTex + appendResult100 ) )) ).rgb;
+				float desaturateDot118 = dot( desaturateInitialColor118, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar118 = lerp( desaturateInitialColor118, desaturateDot118.xxx, 1.0 );
+				float2 uv_AlphaTex1 = input.ase_texcoord3.xy * _AlphaTex1_ST.xy + _AlphaTex1_ST.zw;
+				float2 appendResult113 = (float2(( _AlphaTex1U * _TimeParameters.x ) , ( _TimeParameters.x * _AlphaTex1V )));
+				float3 desaturateInitialColor120 = tex2D( _AlphaTex1, ( uv_AlphaTex1 + appendResult113 ) ).rgb;
+				float desaturateDot120 = dot( desaturateInitialColor120, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar120 = lerp( desaturateInitialColor120, desaturateDot120.xxx, 1.0 );
+				float clampResult141 = clamp( ( _MaskAddBias + ( (( _OpacityMaskTexSwitch )?( (desaturateVar118).x ):( (desaturateVar136).x )) * (desaturateVar120).x ) ) , 0.0 , 1.0 );
+				float temp_output_128_0 = (0.0 + (clampResult141 - 0.0) * (2.0 - 0.0) / (1.0 - 0.0));
+				float4 ase_positionSSNorm = ScreenPos / ScreenPos.w;
 				ase_positionSSNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_positionSSNorm.z : ase_positionSSNorm.z * 0.5 + 0.5;
-				half4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
-				half dither131 = Dither4x4Bayer( fmod( ase_positionSS_Pixel.x, 4 ), fmod( ase_positionSS_Pixel.y, 4 ) );
+				float4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
+				float dither131 = Dither4x4Bayer( fmod( ase_positionSS_Pixel.x, 4 ), fmod( ase_positionSS_Pixel.y, 4 ) );
 				dither131 = step( dither131, saturate( ( temp_output_128_0 + _DitherBias ) * 1.00001 ) );
 				
 
@@ -1570,16 +1570,16 @@ Shader "SinCourse/PBR简化"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
-			half4 _MainTex_ST;
-			half4 _SecTex_ST;
+			float4 _MainTex_ST;
+			float4 _SecTex_ST;
 			float4 _MainColor;
-			half4 _NormalTex_ST;
-			half4 _OffsetMaskTex_ST;
-			half4 _OpacityMaskTex_ST;
+			float4 _NormalTex_ST;
+			float4 _OffsetMaskTex_ST;
+			float4 _OpacityMaskTex_ST;
 			float4 _AllColor;
-			half4 _DistortionTex_ST;
-			half4 _AlphaTex1_ST;
-			half4 _OffsetTex_ST;
+			float4 _DistortionTex_ST;
+			float4 _AlphaTex1_ST;
+			float4 _OffsetTex_ST;
 			half _OffsetMaskTexFrequencyToOpacityMaskTex;
 			float _OpacityMaskTexV;
 			half _OpacityMaskTexSwitch;
@@ -1679,21 +1679,21 @@ Shader "SinCourse/PBR简化"
 				UNITY_TRANSFER_INSTANCE_ID(input, output);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
 
-				half2 uv_OffsetTex = input.ase_texcoord.xy * _OffsetTex_ST.xy + _OffsetTex_ST.zw;
-				half2 appendResult88 = (half2(( _OffsetTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetTexV )));
-				half2 temp_output_96_0 = ( uv_OffsetTex + appendResult88 );
-				half2 uv_DistortionTex = input.ase_texcoord.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
-				half2 uv2_DistortionTex = input.ase_texcoord1.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
-				half2 appendResult25 = (half2(_DistortionU , _DistortionV));
-				half3 desaturateInitialColor32 = tex2Dlod( _DistortionTex, float4( ( (( _Distortion2UV )?( uv2_DistortionTex ):( uv_DistortionTex )) + ( appendResult25 * _TimeParameters.x ) ), 0, 0.0) ).rgb;
-				half desaturateDot32 = dot( desaturateInitialColor32, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar32 = lerp( desaturateInitialColor32, desaturateDot32.xxx, 1.0 );
+				float2 uv_OffsetTex = input.ase_texcoord.xy * _OffsetTex_ST.xy + _OffsetTex_ST.zw;
+				float2 appendResult88 = (float2(( _OffsetTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetTexV )));
+				float2 temp_output_96_0 = ( uv_OffsetTex + appendResult88 );
+				float2 uv_DistortionTex = input.ase_texcoord.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
+				float2 uv2_DistortionTex = input.ase_texcoord1.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
+				float2 appendResult25 = (float2(_DistortionU , _DistortionV));
+				float3 desaturateInitialColor32 = tex2Dlod( _DistortionTex, float4( ( (( _Distortion2UV )?( uv2_DistortionTex ):( uv_DistortionTex )) + ( appendResult25 * _TimeParameters.x ) ), 0, 0.0) ).rgb;
+				float desaturateDot32 = dot( desaturateInitialColor32, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar32 = lerp( desaturateInitialColor32, desaturateDot32.xxx, 1.0 );
 				half3 DistortionUV34 = desaturateVar32;
 				half DistortionIndeisty35 = _DistortionIntensity;
-				half3 lerpResult103 = lerp( half3( temp_output_96_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
-				half2 uv_OffsetMaskTex = input.ase_texcoord.xy * _OffsetMaskTex_ST.xy + _OffsetMaskTex_ST.zw;
-				half2 appendResult99 = (half2(( _OffsetMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetMaskTexV )));
-				half4 temp_output_116_0 = ( tex2Dlod( _OffsetTex, float4( (( _OffsetTexDistortionUV )?( lerpResult103 ):( half3( temp_output_96_0 ,  0.0 ) )).xy, 0, 0.0) ) * tex2Dlod( _OffsetMaskTex, float4( ( uv_OffsetMaskTex + appendResult99 ), 0, 0.0) ) );
+				float3 lerpResult103 = lerp( float3( temp_output_96_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
+				float2 uv_OffsetMaskTex = input.ase_texcoord.xy * _OffsetMaskTex_ST.xy + _OffsetMaskTex_ST.zw;
+				float2 appendResult99 = (float2(( _OffsetMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetMaskTexV )));
+				float4 temp_output_116_0 = ( tex2Dlod( _OffsetTex, float4( (( _OffsetTexDistortionUV )?( lerpResult103 ):( half3( temp_output_96_0 ,  0.0 ) )).xy, 0, 0.0) ) * tex2Dlod( _OffsetMaskTex, float4( ( uv_OffsetMaskTex + appendResult99 ), 0, 0.0) ) );
 				
 				output.ase_texcoord3.xy = input.ase_texcoord.xy;
 				output.ase_texcoord3.zw = input.ase_texcoord1.xy;
@@ -1704,7 +1704,7 @@ Shader "SinCourse/PBR简化"
 					float3 defaultVertexValue = float3(0, 0, 0);
 				#endif
 
-				float3 vertexValue = ( temp_output_116_0 * half4( input.normalOS , 0.0 ) * _VertexOffsetIntensity ).rgb;
+				float3 vertexValue = ( temp_output_116_0 * float4( input.normalOS , 0.0 ) * _VertexOffsetIntensity ).rgb;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					input.positionOS.xyz = vertexValue;
@@ -1831,40 +1831,40 @@ Shader "SinCourse/PBR简化"
 					#endif
 				#endif
 
-				half2 uv_OffsetTex = input.ase_texcoord3.xy * _OffsetTex_ST.xy + _OffsetTex_ST.zw;
-				half2 appendResult88 = (half2(( _OffsetTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetTexV )));
-				half2 temp_output_96_0 = ( uv_OffsetTex + appendResult88 );
-				half2 uv_DistortionTex = input.ase_texcoord3.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
-				half2 uv2_DistortionTex = input.ase_texcoord3.zw * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
-				half2 appendResult25 = (half2(_DistortionU , _DistortionV));
-				half3 desaturateInitialColor32 = tex2D( _DistortionTex, ( (( _Distortion2UV )?( uv2_DistortionTex ):( uv_DistortionTex )) + ( appendResult25 * _TimeParameters.x ) ) ).rgb;
-				half desaturateDot32 = dot( desaturateInitialColor32, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar32 = lerp( desaturateInitialColor32, desaturateDot32.xxx, 1.0 );
+				float2 uv_OffsetTex = input.ase_texcoord3.xy * _OffsetTex_ST.xy + _OffsetTex_ST.zw;
+				float2 appendResult88 = (float2(( _OffsetTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetTexV )));
+				float2 temp_output_96_0 = ( uv_OffsetTex + appendResult88 );
+				float2 uv_DistortionTex = input.ase_texcoord3.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
+				float2 uv2_DistortionTex = input.ase_texcoord3.zw * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
+				float2 appendResult25 = (float2(_DistortionU , _DistortionV));
+				float3 desaturateInitialColor32 = tex2D( _DistortionTex, ( (( _Distortion2UV )?( uv2_DistortionTex ):( uv_DistortionTex )) + ( appendResult25 * _TimeParameters.x ) ) ).rgb;
+				float desaturateDot32 = dot( desaturateInitialColor32, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar32 = lerp( desaturateInitialColor32, desaturateDot32.xxx, 1.0 );
 				half3 DistortionUV34 = desaturateVar32;
 				half DistortionIndeisty35 = _DistortionIntensity;
-				half3 lerpResult103 = lerp( half3( temp_output_96_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
-				half2 uv_OffsetMaskTex = input.ase_texcoord3.xy * _OffsetMaskTex_ST.xy + _OffsetMaskTex_ST.zw;
-				half2 appendResult99 = (half2(( _OffsetMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetMaskTexV )));
-				half4 temp_output_116_0 = ( tex2D( _OffsetTex, (( _OffsetTexDistortionUV )?( lerpResult103 ):( half3( temp_output_96_0 ,  0.0 ) )).xy ) * tex2D( _OffsetMaskTex, ( uv_OffsetMaskTex + appendResult99 ) ) );
-				half3 desaturateInitialColor136 = temp_output_116_0.rgb;
-				half desaturateDot136 = dot( desaturateInitialColor136, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar136 = lerp( desaturateInitialColor136, desaturateDot136.xxx, 1.0 );
-				half2 uv_OpacityMaskTex = input.ase_texcoord3.xy * _OpacityMaskTex_ST.xy + _OpacityMaskTex_ST.zw;
-				half2 appendResult100 = (half2(( _OpacityMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OpacityMaskTexV )));
-				half3 desaturateInitialColor118 = tex2D( _OpacityMaskTex, (( _OffsetMaskTexFrequencyToOpacityMaskTex )?( ( appendResult99 + uv_OpacityMaskTex ) ):( ( uv_OpacityMaskTex + appendResult100 ) )) ).rgb;
-				half desaturateDot118 = dot( desaturateInitialColor118, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar118 = lerp( desaturateInitialColor118, desaturateDot118.xxx, 1.0 );
-				half2 uv_AlphaTex1 = input.ase_texcoord3.xy * _AlphaTex1_ST.xy + _AlphaTex1_ST.zw;
-				half2 appendResult113 = (half2(( _AlphaTex1U * _TimeParameters.x ) , ( _TimeParameters.x * _AlphaTex1V )));
-				half3 desaturateInitialColor120 = tex2D( _AlphaTex1, ( uv_AlphaTex1 + appendResult113 ) ).rgb;
-				half desaturateDot120 = dot( desaturateInitialColor120, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar120 = lerp( desaturateInitialColor120, desaturateDot120.xxx, 1.0 );
-				half clampResult141 = clamp( ( _MaskAddBias + ( (( _OpacityMaskTexSwitch )?( (desaturateVar118).x ):( (desaturateVar136).x )) * (desaturateVar120).x ) ) , 0.0 , 1.0 );
-				half temp_output_128_0 = (0.0 + (clampResult141 - 0.0) * (2.0 - 0.0) / (1.0 - 0.0));
-				half4 ase_positionSSNorm = ScreenPos / ScreenPos.w;
+				float3 lerpResult103 = lerp( float3( temp_output_96_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
+				float2 uv_OffsetMaskTex = input.ase_texcoord3.xy * _OffsetMaskTex_ST.xy + _OffsetMaskTex_ST.zw;
+				float2 appendResult99 = (float2(( _OffsetMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetMaskTexV )));
+				float4 temp_output_116_0 = ( tex2D( _OffsetTex, (( _OffsetTexDistortionUV )?( lerpResult103 ):( half3( temp_output_96_0 ,  0.0 ) )).xy ) * tex2D( _OffsetMaskTex, ( uv_OffsetMaskTex + appendResult99 ) ) );
+				float3 desaturateInitialColor136 = temp_output_116_0.rgb;
+				float desaturateDot136 = dot( desaturateInitialColor136, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar136 = lerp( desaturateInitialColor136, desaturateDot136.xxx, 1.0 );
+				float2 uv_OpacityMaskTex = input.ase_texcoord3.xy * _OpacityMaskTex_ST.xy + _OpacityMaskTex_ST.zw;
+				float2 appendResult100 = (float2(( _OpacityMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OpacityMaskTexV )));
+				float3 desaturateInitialColor118 = tex2D( _OpacityMaskTex, (( _OffsetMaskTexFrequencyToOpacityMaskTex )?( ( appendResult99 + uv_OpacityMaskTex ) ):( ( uv_OpacityMaskTex + appendResult100 ) )) ).rgb;
+				float desaturateDot118 = dot( desaturateInitialColor118, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar118 = lerp( desaturateInitialColor118, desaturateDot118.xxx, 1.0 );
+				float2 uv_AlphaTex1 = input.ase_texcoord3.xy * _AlphaTex1_ST.xy + _AlphaTex1_ST.zw;
+				float2 appendResult113 = (float2(( _AlphaTex1U * _TimeParameters.x ) , ( _TimeParameters.x * _AlphaTex1V )));
+				float3 desaturateInitialColor120 = tex2D( _AlphaTex1, ( uv_AlphaTex1 + appendResult113 ) ).rgb;
+				float desaturateDot120 = dot( desaturateInitialColor120, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar120 = lerp( desaturateInitialColor120, desaturateDot120.xxx, 1.0 );
+				float clampResult141 = clamp( ( _MaskAddBias + ( (( _OpacityMaskTexSwitch )?( (desaturateVar118).x ):( (desaturateVar136).x )) * (desaturateVar120).x ) ) , 0.0 , 1.0 );
+				float temp_output_128_0 = (0.0 + (clampResult141 - 0.0) * (2.0 - 0.0) / (1.0 - 0.0));
+				float4 ase_positionSSNorm = ScreenPos / ScreenPos.w;
 				ase_positionSSNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_positionSSNorm.z : ase_positionSSNorm.z * 0.5 + 0.5;
-				half4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
-				half dither131 = Dither4x4Bayer( fmod( ase_positionSS_Pixel.x, 4 ), fmod( ase_positionSS_Pixel.y, 4 ) );
+				float4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
+				float dither131 = Dither4x4Bayer( fmod( ase_positionSS_Pixel.x, 4 ), fmod( ase_positionSS_Pixel.y, 4 ) );
 				dither131 = step( dither131, saturate( ( temp_output_128_0 + _DitherBias ) * 1.00001 ) );
 				
 
@@ -1955,7 +1955,7 @@ Shader "SinCourse/PBR简化"
 				float4 texcoord0 : TEXCOORD0;
 				float4 texcoord1 : TEXCOORD1;
 				float4 texcoord2 : TEXCOORD2;
-				half4 ase_tangent : TANGENT;
+				float4 ase_tangent : TANGENT;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
@@ -1983,16 +1983,16 @@ Shader "SinCourse/PBR简化"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
-			half4 _MainTex_ST;
-			half4 _SecTex_ST;
+			float4 _MainTex_ST;
+			float4 _SecTex_ST;
 			float4 _MainColor;
-			half4 _NormalTex_ST;
-			half4 _OffsetMaskTex_ST;
-			half4 _OpacityMaskTex_ST;
+			float4 _NormalTex_ST;
+			float4 _OffsetMaskTex_ST;
+			float4 _OpacityMaskTex_ST;
 			float4 _AllColor;
-			half4 _DistortionTex_ST;
-			half4 _AlphaTex1_ST;
-			half4 _OffsetTex_ST;
+			float4 _DistortionTex_ST;
+			float4 _AlphaTex1_ST;
+			float4 _OffsetTex_ST;
 			half _OffsetMaskTexFrequencyToOpacityMaskTex;
 			float _OpacityMaskTexV;
 			half _OpacityMaskTexSwitch;
@@ -2095,27 +2095,27 @@ Shader "SinCourse/PBR简化"
 				UNITY_TRANSFER_INSTANCE_ID(input, output);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
 
-				half2 uv_OffsetTex = input.texcoord0.xy * _OffsetTex_ST.xy + _OffsetTex_ST.zw;
-				half2 appendResult88 = (half2(( _OffsetTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetTexV )));
-				half2 temp_output_96_0 = ( uv_OffsetTex + appendResult88 );
-				half2 uv_DistortionTex = input.texcoord0.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
-				half2 uv2_DistortionTex = input.texcoord1.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
-				half2 appendResult25 = (half2(_DistortionU , _DistortionV));
-				half3 desaturateInitialColor32 = tex2Dlod( _DistortionTex, float4( ( (( _Distortion2UV )?( uv2_DistortionTex ):( uv_DistortionTex )) + ( appendResult25 * _TimeParameters.x ) ), 0, 0.0) ).rgb;
-				half desaturateDot32 = dot( desaturateInitialColor32, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar32 = lerp( desaturateInitialColor32, desaturateDot32.xxx, 1.0 );
+				float2 uv_OffsetTex = input.texcoord0.xy * _OffsetTex_ST.xy + _OffsetTex_ST.zw;
+				float2 appendResult88 = (float2(( _OffsetTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetTexV )));
+				float2 temp_output_96_0 = ( uv_OffsetTex + appendResult88 );
+				float2 uv_DistortionTex = input.texcoord0.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
+				float2 uv2_DistortionTex = input.texcoord1.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
+				float2 appendResult25 = (float2(_DistortionU , _DistortionV));
+				float3 desaturateInitialColor32 = tex2Dlod( _DistortionTex, float4( ( (( _Distortion2UV )?( uv2_DistortionTex ):( uv_DistortionTex )) + ( appendResult25 * _TimeParameters.x ) ), 0, 0.0) ).rgb;
+				float desaturateDot32 = dot( desaturateInitialColor32, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar32 = lerp( desaturateInitialColor32, desaturateDot32.xxx, 1.0 );
 				half3 DistortionUV34 = desaturateVar32;
 				half DistortionIndeisty35 = _DistortionIntensity;
-				half3 lerpResult103 = lerp( half3( temp_output_96_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
-				half2 uv_OffsetMaskTex = input.texcoord0.xy * _OffsetMaskTex_ST.xy + _OffsetMaskTex_ST.zw;
-				half2 appendResult99 = (half2(( _OffsetMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetMaskTexV )));
-				half4 temp_output_116_0 = ( tex2Dlod( _OffsetTex, float4( (( _OffsetTexDistortionUV )?( lerpResult103 ):( half3( temp_output_96_0 ,  0.0 ) )).xy, 0, 0.0) ) * tex2Dlod( _OffsetMaskTex, float4( ( uv_OffsetMaskTex + appendResult99 ), 0, 0.0) ) );
+				float3 lerpResult103 = lerp( float3( temp_output_96_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
+				float2 uv_OffsetMaskTex = input.texcoord0.xy * _OffsetMaskTex_ST.xy + _OffsetMaskTex_ST.zw;
+				float2 appendResult99 = (float2(( _OffsetMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetMaskTexV )));
+				float4 temp_output_116_0 = ( tex2Dlod( _OffsetTex, float4( (( _OffsetTexDistortionUV )?( lerpResult103 ):( half3( temp_output_96_0 ,  0.0 ) )).xy, 0, 0.0) ) * tex2Dlod( _OffsetMaskTex, float4( ( uv_OffsetMaskTex + appendResult99 ), 0, 0.0) ) );
 				
-				half3 ase_tangentWS = TransformObjectToWorldDir( input.ase_tangent.xyz );
+				float3 ase_tangentWS = TransformObjectToWorldDir( input.ase_tangent.xyz );
 				output.ase_texcoord6.xyz = ase_tangentWS;
-				half3 ase_normalWS = TransformObjectToWorldNormal( input.normalOS );
+				float3 ase_normalWS = TransformObjectToWorldNormal( input.normalOS );
 				output.ase_texcoord7.xyz = ase_normalWS;
-				half ase_tangentSign = input.ase_tangent.w * ( unity_WorldTransformParams.w >= 0.0 ? 1.0 : -1.0 );
+				float ase_tangentSign = input.ase_tangent.w * ( unity_WorldTransformParams.w >= 0.0 ? 1.0 : -1.0 );
 				float3 ase_bitangentWS = cross( ase_normalWS, ase_tangentWS ) * ase_tangentSign;
 				output.ase_texcoord8.xyz = ase_bitangentWS;
 				
@@ -2139,7 +2139,7 @@ Shader "SinCourse/PBR简化"
 					float3 defaultVertexValue = float3(0, 0, 0);
 				#endif
 
-				float3 vertexValue = ( temp_output_116_0 * half4( input.normalOS , 0.0 ) * _VertexOffsetIntensity ).rgb;
+				float3 vertexValue = ( temp_output_116_0 * float4( input.normalOS , 0.0 ) * _VertexOffsetIntensity ).rgb;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					input.positionOS.xyz = vertexValue;
@@ -2183,7 +2183,7 @@ Shader "SinCourse/PBR简化"
 				float4 texcoord0 : TEXCOORD0;
 				float4 texcoord1 : TEXCOORD1;
 				float4 texcoord2 : TEXCOORD2;
-				half4 ase_tangent : TANGENT;
+				float4 ase_tangent : TANGENT;
 
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
@@ -2283,33 +2283,33 @@ Shader "SinCourse/PBR简化"
 					#endif
 				#endif
 
-				half2 uv_NormalTex = input.ase_texcoord4.xyz.xy * _NormalTex_ST.xy + _NormalTex_ST.zw;
-				half2 appendResult66 = (half2(( _NormalTexU * _TimeParameters.x ) , ( _TimeParameters.x * _NormalTexV )));
-				half2 temp_output_68_0 = ( uv_NormalTex + appendResult66 );
-				half2 uv_DistortionTex = input.ase_texcoord4.xyz.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
-				half2 uv2_DistortionTex = input.ase_texcoord5.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
-				half2 appendResult25 = (half2(_DistortionU , _DistortionV));
-				half3 desaturateInitialColor32 = tex2D( _DistortionTex, ( (( _Distortion2UV )?( uv2_DistortionTex ):( uv_DistortionTex )) + ( appendResult25 * _TimeParameters.x ) ) ).rgb;
-				half desaturateDot32 = dot( desaturateInitialColor32, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar32 = lerp( desaturateInitialColor32, desaturateDot32.xxx, 1.0 );
+				float2 uv_NormalTex = input.ase_texcoord4.xyz.xy * _NormalTex_ST.xy + _NormalTex_ST.zw;
+				float2 appendResult66 = (float2(( _NormalTexU * _TimeParameters.x ) , ( _TimeParameters.x * _NormalTexV )));
+				float2 temp_output_68_0 = ( uv_NormalTex + appendResult66 );
+				float2 uv_DistortionTex = input.ase_texcoord4.xyz.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
+				float2 uv2_DistortionTex = input.ase_texcoord5.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
+				float2 appendResult25 = (float2(_DistortionU , _DistortionV));
+				float3 desaturateInitialColor32 = tex2D( _DistortionTex, ( (( _Distortion2UV )?( uv2_DistortionTex ):( uv_DistortionTex )) + ( appendResult25 * _TimeParameters.x ) ) ).rgb;
+				float desaturateDot32 = dot( desaturateInitialColor32, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar32 = lerp( desaturateInitialColor32, desaturateDot32.xxx, 1.0 );
 				half3 DistortionUV34 = desaturateVar32;
 				half DistortionIndeisty35 = _DistortionIntensity;
-				half3 lerpResult71 = lerp( half3( temp_output_68_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
-				half3 unpack74 = UnpackNormalScale( tex2D( _NormalTex, (( _NormalTexDistortionUV )?( lerpResult71 ):( half3( temp_output_68_0 ,  0.0 ) )).xy ), _NormalIntensity );
+				float3 lerpResult71 = lerp( float3( temp_output_68_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
+				float3 unpack74 = UnpackNormalScale( tex2D( _NormalTex, (( _NormalTexDistortionUV )?( lerpResult71 ):( half3( temp_output_68_0 ,  0.0 ) )).xy ), _NormalIntensity );
 				unpack74.z = lerp( 1, unpack74.z, saturate(_NormalIntensity) );
-				half3 tex2DNode74 = unpack74;
-				half3 ase_tangentWS = input.ase_texcoord6.xyz;
-				half3 ase_normalWS = input.ase_texcoord7.xyz;
+				float3 tex2DNode74 = unpack74;
+				float3 ase_tangentWS = input.ase_texcoord6.xyz;
+				float3 ase_normalWS = input.ase_texcoord7.xyz;
 				float3 ase_bitangentWS = input.ase_texcoord8.xyz;
-				half3 tanToWorld0 = float3( ase_tangentWS.x, ase_bitangentWS.x, ase_normalWS.x );
-				half3 tanToWorld1 = float3( ase_tangentWS.y, ase_bitangentWS.y, ase_normalWS.y );
-				half3 tanToWorld2 = float3( ase_tangentWS.z, ase_bitangentWS.z, ase_normalWS.z );
+				float3 tanToWorld0 = float3( ase_tangentWS.x, ase_bitangentWS.x, ase_normalWS.x );
+				float3 tanToWorld1 = float3( ase_tangentWS.y, ase_bitangentWS.y, ase_normalWS.y );
+				float3 tanToWorld2 = float3( ase_tangentWS.z, ase_bitangentWS.z, ase_normalWS.z );
 				float3 ase_viewVectorWS = ( _WorldSpaceCameraPos.xyz - WorldPosition );
 				float3 ase_viewDirWS = normalize( ase_viewVectorWS );
-				half3 worldRefl37 = normalize( reflect( -ase_viewDirWS, float3( dot( tanToWorld0, tex2DNode74 ), dot( tanToWorld1, tex2DNode74 ), dot( tanToWorld2, tex2DNode74 ) ) ) );
-				half2 uv_MainTex = input.ase_texcoord4.xyz.xy * _MainTex_ST.xy + _MainTex_ST.zw;
-				half2 appendResult55 = (half2(( _MainTexU * _TimeParameters.x ) , ( _TimeParameters.x * _MainTexV )));
-				half4 temp_output_48_0 = ( ( ( _CubeMapIntensity * texCUBE( _CubeMapTex, worldRefl37 ) ) + ( _MainColor * tex2D( _MainTex, ( uv_MainTex + appendResult55 ) ) ) ) * _AllColor );
+				float3 worldRefl37 = normalize( reflect( -ase_viewDirWS, float3( dot( tanToWorld0, tex2DNode74 ), dot( tanToWorld1, tex2DNode74 ), dot( tanToWorld2, tex2DNode74 ) ) ) );
+				float2 uv_MainTex = input.ase_texcoord4.xyz.xy * _MainTex_ST.xy + _MainTex_ST.zw;
+				float2 appendResult55 = (float2(( _MainTexU * _TimeParameters.x ) , ( _TimeParameters.x * _MainTexV )));
+				float4 temp_output_48_0 = ( ( ( _CubeMapIntensity * texCUBE( _CubeMapTex, worldRefl37 ) ) + ( _MainColor * tex2D( _MainTex, ( uv_MainTex + appendResult55 ) ) ) ) * _AllColor );
 				#ifdef _ALBEDOOFF_ON
 				float4 staticSwitch59 = float4( 0,0,0,0 );
 				#else
@@ -2322,33 +2322,33 @@ Shader "SinCourse/PBR简化"
 				float4 staticSwitch58 = float4( 0,0,0,0 );
 				#endif
 				
-				half2 uv_OffsetTex = input.ase_texcoord4.xyz.xy * _OffsetTex_ST.xy + _OffsetTex_ST.zw;
-				half2 appendResult88 = (half2(( _OffsetTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetTexV )));
-				half2 temp_output_96_0 = ( uv_OffsetTex + appendResult88 );
-				half3 lerpResult103 = lerp( half3( temp_output_96_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
-				half2 uv_OffsetMaskTex = input.ase_texcoord4.xyz.xy * _OffsetMaskTex_ST.xy + _OffsetMaskTex_ST.zw;
-				half2 appendResult99 = (half2(( _OffsetMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetMaskTexV )));
-				half4 temp_output_116_0 = ( tex2D( _OffsetTex, (( _OffsetTexDistortionUV )?( lerpResult103 ):( half3( temp_output_96_0 ,  0.0 ) )).xy ) * tex2D( _OffsetMaskTex, ( uv_OffsetMaskTex + appendResult99 ) ) );
-				half3 desaturateInitialColor136 = temp_output_116_0.rgb;
-				half desaturateDot136 = dot( desaturateInitialColor136, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar136 = lerp( desaturateInitialColor136, desaturateDot136.xxx, 1.0 );
-				half2 uv_OpacityMaskTex = input.ase_texcoord4.xyz.xy * _OpacityMaskTex_ST.xy + _OpacityMaskTex_ST.zw;
-				half2 appendResult100 = (half2(( _OpacityMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OpacityMaskTexV )));
-				half3 desaturateInitialColor118 = tex2D( _OpacityMaskTex, (( _OffsetMaskTexFrequencyToOpacityMaskTex )?( ( appendResult99 + uv_OpacityMaskTex ) ):( ( uv_OpacityMaskTex + appendResult100 ) )) ).rgb;
-				half desaturateDot118 = dot( desaturateInitialColor118, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar118 = lerp( desaturateInitialColor118, desaturateDot118.xxx, 1.0 );
-				half2 uv_AlphaTex1 = input.ase_texcoord4.xyz.xy * _AlphaTex1_ST.xy + _AlphaTex1_ST.zw;
-				half2 appendResult113 = (half2(( _AlphaTex1U * _TimeParameters.x ) , ( _TimeParameters.x * _AlphaTex1V )));
-				half3 desaturateInitialColor120 = tex2D( _AlphaTex1, ( uv_AlphaTex1 + appendResult113 ) ).rgb;
-				half desaturateDot120 = dot( desaturateInitialColor120, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar120 = lerp( desaturateInitialColor120, desaturateDot120.xxx, 1.0 );
-				half clampResult141 = clamp( ( _MaskAddBias + ( (( _OpacityMaskTexSwitch )?( (desaturateVar118).x ):( (desaturateVar136).x )) * (desaturateVar120).x ) ) , 0.0 , 1.0 );
-				half temp_output_128_0 = (0.0 + (clampResult141 - 0.0) * (2.0 - 0.0) / (1.0 - 0.0));
+				float2 uv_OffsetTex = input.ase_texcoord4.xyz.xy * _OffsetTex_ST.xy + _OffsetTex_ST.zw;
+				float2 appendResult88 = (float2(( _OffsetTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetTexV )));
+				float2 temp_output_96_0 = ( uv_OffsetTex + appendResult88 );
+				float3 lerpResult103 = lerp( float3( temp_output_96_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
+				float2 uv_OffsetMaskTex = input.ase_texcoord4.xyz.xy * _OffsetMaskTex_ST.xy + _OffsetMaskTex_ST.zw;
+				float2 appendResult99 = (float2(( _OffsetMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetMaskTexV )));
+				float4 temp_output_116_0 = ( tex2D( _OffsetTex, (( _OffsetTexDistortionUV )?( lerpResult103 ):( half3( temp_output_96_0 ,  0.0 ) )).xy ) * tex2D( _OffsetMaskTex, ( uv_OffsetMaskTex + appendResult99 ) ) );
+				float3 desaturateInitialColor136 = temp_output_116_0.rgb;
+				float desaturateDot136 = dot( desaturateInitialColor136, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar136 = lerp( desaturateInitialColor136, desaturateDot136.xxx, 1.0 );
+				float2 uv_OpacityMaskTex = input.ase_texcoord4.xyz.xy * _OpacityMaskTex_ST.xy + _OpacityMaskTex_ST.zw;
+				float2 appendResult100 = (float2(( _OpacityMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OpacityMaskTexV )));
+				float3 desaturateInitialColor118 = tex2D( _OpacityMaskTex, (( _OffsetMaskTexFrequencyToOpacityMaskTex )?( ( appendResult99 + uv_OpacityMaskTex ) ):( ( uv_OpacityMaskTex + appendResult100 ) )) ).rgb;
+				float desaturateDot118 = dot( desaturateInitialColor118, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar118 = lerp( desaturateInitialColor118, desaturateDot118.xxx, 1.0 );
+				float2 uv_AlphaTex1 = input.ase_texcoord4.xyz.xy * _AlphaTex1_ST.xy + _AlphaTex1_ST.zw;
+				float2 appendResult113 = (float2(( _AlphaTex1U * _TimeParameters.x ) , ( _TimeParameters.x * _AlphaTex1V )));
+				float3 desaturateInitialColor120 = tex2D( _AlphaTex1, ( uv_AlphaTex1 + appendResult113 ) ).rgb;
+				float desaturateDot120 = dot( desaturateInitialColor120, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar120 = lerp( desaturateInitialColor120, desaturateDot120.xxx, 1.0 );
+				float clampResult141 = clamp( ( _MaskAddBias + ( (( _OpacityMaskTexSwitch )?( (desaturateVar118).x ):( (desaturateVar136).x )) * (desaturateVar120).x ) ) , 0.0 , 1.0 );
+				float temp_output_128_0 = (0.0 + (clampResult141 - 0.0) * (2.0 - 0.0) / (1.0 - 0.0));
 				float4 screenPos = input.ase_texcoord9;
-				half4 ase_positionSSNorm = screenPos / screenPos.w;
+				float4 ase_positionSSNorm = screenPos / screenPos.w;
 				ase_positionSSNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_positionSSNorm.z : ase_positionSSNorm.z * 0.5 + 0.5;
-				half4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
-				half dither131 = Dither4x4Bayer( fmod( ase_positionSS_Pixel.x, 4 ), fmod( ase_positionSS_Pixel.y, 4 ) );
+				float4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
+				float dither131 = Dither4x4Bayer( fmod( ase_positionSS_Pixel.x, 4 ), fmod( ase_positionSS_Pixel.y, 4 ) );
 				dither131 = step( dither131, saturate( ( temp_output_128_0 + _DitherBias ) * 1.00001 ) );
 				
 
@@ -2438,7 +2438,7 @@ Shader "SinCourse/PBR简化"
 				float3 normalOS : NORMAL;
 				float4 ase_texcoord : TEXCOORD0;
 				float4 ase_texcoord1 : TEXCOORD1;
-				half4 ase_tangent : TANGENT;
+				float4 ase_tangent : TANGENT;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
@@ -2462,16 +2462,16 @@ Shader "SinCourse/PBR简化"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
-			half4 _MainTex_ST;
-			half4 _SecTex_ST;
+			float4 _MainTex_ST;
+			float4 _SecTex_ST;
 			float4 _MainColor;
-			half4 _NormalTex_ST;
-			half4 _OffsetMaskTex_ST;
-			half4 _OpacityMaskTex_ST;
+			float4 _NormalTex_ST;
+			float4 _OffsetMaskTex_ST;
+			float4 _OpacityMaskTex_ST;
 			float4 _AllColor;
-			half4 _DistortionTex_ST;
-			half4 _AlphaTex1_ST;
-			half4 _OffsetTex_ST;
+			float4 _DistortionTex_ST;
+			float4 _AlphaTex1_ST;
+			float4 _OffsetTex_ST;
 			half _OffsetMaskTexFrequencyToOpacityMaskTex;
 			float _OpacityMaskTexV;
 			half _OpacityMaskTexSwitch;
@@ -2574,27 +2574,27 @@ Shader "SinCourse/PBR简化"
 				UNITY_TRANSFER_INSTANCE_ID( input, output );
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO( output );
 
-				half2 uv_OffsetTex = input.ase_texcoord.xy * _OffsetTex_ST.xy + _OffsetTex_ST.zw;
-				half2 appendResult88 = (half2(( _OffsetTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetTexV )));
-				half2 temp_output_96_0 = ( uv_OffsetTex + appendResult88 );
-				half2 uv_DistortionTex = input.ase_texcoord.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
-				half2 uv2_DistortionTex = input.ase_texcoord1.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
-				half2 appendResult25 = (half2(_DistortionU , _DistortionV));
-				half3 desaturateInitialColor32 = tex2Dlod( _DistortionTex, float4( ( (( _Distortion2UV )?( uv2_DistortionTex ):( uv_DistortionTex )) + ( appendResult25 * _TimeParameters.x ) ), 0, 0.0) ).rgb;
-				half desaturateDot32 = dot( desaturateInitialColor32, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar32 = lerp( desaturateInitialColor32, desaturateDot32.xxx, 1.0 );
+				float2 uv_OffsetTex = input.ase_texcoord.xy * _OffsetTex_ST.xy + _OffsetTex_ST.zw;
+				float2 appendResult88 = (float2(( _OffsetTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetTexV )));
+				float2 temp_output_96_0 = ( uv_OffsetTex + appendResult88 );
+				float2 uv_DistortionTex = input.ase_texcoord.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
+				float2 uv2_DistortionTex = input.ase_texcoord1.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
+				float2 appendResult25 = (float2(_DistortionU , _DistortionV));
+				float3 desaturateInitialColor32 = tex2Dlod( _DistortionTex, float4( ( (( _Distortion2UV )?( uv2_DistortionTex ):( uv_DistortionTex )) + ( appendResult25 * _TimeParameters.x ) ), 0, 0.0) ).rgb;
+				float desaturateDot32 = dot( desaturateInitialColor32, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar32 = lerp( desaturateInitialColor32, desaturateDot32.xxx, 1.0 );
 				half3 DistortionUV34 = desaturateVar32;
 				half DistortionIndeisty35 = _DistortionIntensity;
-				half3 lerpResult103 = lerp( half3( temp_output_96_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
-				half2 uv_OffsetMaskTex = input.ase_texcoord.xy * _OffsetMaskTex_ST.xy + _OffsetMaskTex_ST.zw;
-				half2 appendResult99 = (half2(( _OffsetMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetMaskTexV )));
-				half4 temp_output_116_0 = ( tex2Dlod( _OffsetTex, float4( (( _OffsetTexDistortionUV )?( lerpResult103 ):( half3( temp_output_96_0 ,  0.0 ) )).xy, 0, 0.0) ) * tex2Dlod( _OffsetMaskTex, float4( ( uv_OffsetMaskTex + appendResult99 ), 0, 0.0) ) );
+				float3 lerpResult103 = lerp( float3( temp_output_96_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
+				float2 uv_OffsetMaskTex = input.ase_texcoord.xy * _OffsetMaskTex_ST.xy + _OffsetMaskTex_ST.zw;
+				float2 appendResult99 = (float2(( _OffsetMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetMaskTexV )));
+				float4 temp_output_116_0 = ( tex2Dlod( _OffsetTex, float4( (( _OffsetTexDistortionUV )?( lerpResult103 ):( half3( temp_output_96_0 ,  0.0 ) )).xy, 0, 0.0) ) * tex2Dlod( _OffsetMaskTex, float4( ( uv_OffsetMaskTex + appendResult99 ), 0, 0.0) ) );
 				
-				half3 ase_tangentWS = TransformObjectToWorldDir( input.ase_tangent.xyz );
+				float3 ase_tangentWS = TransformObjectToWorldDir( input.ase_tangent.xyz );
 				output.ase_texcoord4.xyz = ase_tangentWS;
-				half3 ase_normalWS = TransformObjectToWorldNormal( input.normalOS );
+				float3 ase_normalWS = TransformObjectToWorldNormal( input.normalOS );
 				output.ase_texcoord5.xyz = ase_normalWS;
-				half ase_tangentSign = input.ase_tangent.w * ( unity_WorldTransformParams.w >= 0.0 ? 1.0 : -1.0 );
+				float ase_tangentSign = input.ase_tangent.w * ( unity_WorldTransformParams.w >= 0.0 ? 1.0 : -1.0 );
 				float3 ase_bitangentWS = cross( ase_normalWS, ase_tangentWS ) * ase_tangentSign;
 				output.ase_texcoord6.xyz = ase_bitangentWS;
 				
@@ -2618,7 +2618,7 @@ Shader "SinCourse/PBR简化"
 					float3 defaultVertexValue = float3(0, 0, 0);
 				#endif
 
-				float3 vertexValue = ( temp_output_116_0 * half4( input.normalOS , 0.0 ) * _VertexOffsetIntensity ).rgb;
+				float3 vertexValue = ( temp_output_116_0 * float4( input.normalOS , 0.0 ) * _VertexOffsetIntensity ).rgb;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					input.positionOS.xyz = vertexValue;
@@ -2649,7 +2649,7 @@ Shader "SinCourse/PBR简化"
 				float3 normalOS : NORMAL;
 				float4 ase_texcoord : TEXCOORD0;
 				float4 ase_texcoord1 : TEXCOORD1;
-				half4 ase_tangent : TANGENT;
+				float4 ase_tangent : TANGENT;
 
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
@@ -2747,66 +2747,66 @@ Shader "SinCourse/PBR简化"
 					#endif
 				#endif
 
-				half2 uv_NormalTex = input.ase_texcoord2.xyz.xy * _NormalTex_ST.xy + _NormalTex_ST.zw;
-				half2 appendResult66 = (half2(( _NormalTexU * _TimeParameters.x ) , ( _TimeParameters.x * _NormalTexV )));
-				half2 temp_output_68_0 = ( uv_NormalTex + appendResult66 );
-				half2 uv_DistortionTex = input.ase_texcoord2.xyz.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
-				half2 uv2_DistortionTex = input.ase_texcoord3.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
-				half2 appendResult25 = (half2(_DistortionU , _DistortionV));
-				half3 desaturateInitialColor32 = tex2D( _DistortionTex, ( (( _Distortion2UV )?( uv2_DistortionTex ):( uv_DistortionTex )) + ( appendResult25 * _TimeParameters.x ) ) ).rgb;
-				half desaturateDot32 = dot( desaturateInitialColor32, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar32 = lerp( desaturateInitialColor32, desaturateDot32.xxx, 1.0 );
+				float2 uv_NormalTex = input.ase_texcoord2.xyz.xy * _NormalTex_ST.xy + _NormalTex_ST.zw;
+				float2 appendResult66 = (float2(( _NormalTexU * _TimeParameters.x ) , ( _TimeParameters.x * _NormalTexV )));
+				float2 temp_output_68_0 = ( uv_NormalTex + appendResult66 );
+				float2 uv_DistortionTex = input.ase_texcoord2.xyz.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
+				float2 uv2_DistortionTex = input.ase_texcoord3.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
+				float2 appendResult25 = (float2(_DistortionU , _DistortionV));
+				float3 desaturateInitialColor32 = tex2D( _DistortionTex, ( (( _Distortion2UV )?( uv2_DistortionTex ):( uv_DistortionTex )) + ( appendResult25 * _TimeParameters.x ) ) ).rgb;
+				float desaturateDot32 = dot( desaturateInitialColor32, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar32 = lerp( desaturateInitialColor32, desaturateDot32.xxx, 1.0 );
 				half3 DistortionUV34 = desaturateVar32;
 				half DistortionIndeisty35 = _DistortionIntensity;
-				half3 lerpResult71 = lerp( half3( temp_output_68_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
-				half3 unpack74 = UnpackNormalScale( tex2D( _NormalTex, (( _NormalTexDistortionUV )?( lerpResult71 ):( half3( temp_output_68_0 ,  0.0 ) )).xy ), _NormalIntensity );
+				float3 lerpResult71 = lerp( float3( temp_output_68_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
+				float3 unpack74 = UnpackNormalScale( tex2D( _NormalTex, (( _NormalTexDistortionUV )?( lerpResult71 ):( half3( temp_output_68_0 ,  0.0 ) )).xy ), _NormalIntensity );
 				unpack74.z = lerp( 1, unpack74.z, saturate(_NormalIntensity) );
-				half3 tex2DNode74 = unpack74;
-				half3 ase_tangentWS = input.ase_texcoord4.xyz;
-				half3 ase_normalWS = input.ase_texcoord5.xyz;
+				float3 tex2DNode74 = unpack74;
+				float3 ase_tangentWS = input.ase_texcoord4.xyz;
+				float3 ase_normalWS = input.ase_texcoord5.xyz;
 				float3 ase_bitangentWS = input.ase_texcoord6.xyz;
-				half3 tanToWorld0 = float3( ase_tangentWS.x, ase_bitangentWS.x, ase_normalWS.x );
-				half3 tanToWorld1 = float3( ase_tangentWS.y, ase_bitangentWS.y, ase_normalWS.y );
-				half3 tanToWorld2 = float3( ase_tangentWS.z, ase_bitangentWS.z, ase_normalWS.z );
+				float3 tanToWorld0 = float3( ase_tangentWS.x, ase_bitangentWS.x, ase_normalWS.x );
+				float3 tanToWorld1 = float3( ase_tangentWS.y, ase_bitangentWS.y, ase_normalWS.y );
+				float3 tanToWorld2 = float3( ase_tangentWS.z, ase_bitangentWS.z, ase_normalWS.z );
 				float3 ase_viewVectorWS = ( _WorldSpaceCameraPos.xyz - WorldPosition );
 				float3 ase_viewDirWS = normalize( ase_viewVectorWS );
-				half3 worldRefl37 = normalize( reflect( -ase_viewDirWS, float3( dot( tanToWorld0, tex2DNode74 ), dot( tanToWorld1, tex2DNode74 ), dot( tanToWorld2, tex2DNode74 ) ) ) );
-				half2 uv_MainTex = input.ase_texcoord2.xyz.xy * _MainTex_ST.xy + _MainTex_ST.zw;
-				half2 appendResult55 = (half2(( _MainTexU * _TimeParameters.x ) , ( _TimeParameters.x * _MainTexV )));
-				half4 temp_output_48_0 = ( ( ( _CubeMapIntensity * texCUBE( _CubeMapTex, worldRefl37 ) ) + ( _MainColor * tex2D( _MainTex, ( uv_MainTex + appendResult55 ) ) ) ) * _AllColor );
+				float3 worldRefl37 = normalize( reflect( -ase_viewDirWS, float3( dot( tanToWorld0, tex2DNode74 ), dot( tanToWorld1, tex2DNode74 ), dot( tanToWorld2, tex2DNode74 ) ) ) );
+				float2 uv_MainTex = input.ase_texcoord2.xyz.xy * _MainTex_ST.xy + _MainTex_ST.zw;
+				float2 appendResult55 = (float2(( _MainTexU * _TimeParameters.x ) , ( _TimeParameters.x * _MainTexV )));
+				float4 temp_output_48_0 = ( ( ( _CubeMapIntensity * texCUBE( _CubeMapTex, worldRefl37 ) ) + ( _MainColor * tex2D( _MainTex, ( uv_MainTex + appendResult55 ) ) ) ) * _AllColor );
 				#ifdef _ALBEDOOFF_ON
 				float4 staticSwitch59 = float4( 0,0,0,0 );
 				#else
 				float4 staticSwitch59 = temp_output_48_0;
 				#endif
 				
-				half2 uv_OffsetTex = input.ase_texcoord2.xyz.xy * _OffsetTex_ST.xy + _OffsetTex_ST.zw;
-				half2 appendResult88 = (half2(( _OffsetTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetTexV )));
-				half2 temp_output_96_0 = ( uv_OffsetTex + appendResult88 );
-				half3 lerpResult103 = lerp( half3( temp_output_96_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
-				half2 uv_OffsetMaskTex = input.ase_texcoord2.xyz.xy * _OffsetMaskTex_ST.xy + _OffsetMaskTex_ST.zw;
-				half2 appendResult99 = (half2(( _OffsetMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetMaskTexV )));
-				half4 temp_output_116_0 = ( tex2D( _OffsetTex, (( _OffsetTexDistortionUV )?( lerpResult103 ):( half3( temp_output_96_0 ,  0.0 ) )).xy ) * tex2D( _OffsetMaskTex, ( uv_OffsetMaskTex + appendResult99 ) ) );
-				half3 desaturateInitialColor136 = temp_output_116_0.rgb;
-				half desaturateDot136 = dot( desaturateInitialColor136, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar136 = lerp( desaturateInitialColor136, desaturateDot136.xxx, 1.0 );
-				half2 uv_OpacityMaskTex = input.ase_texcoord2.xyz.xy * _OpacityMaskTex_ST.xy + _OpacityMaskTex_ST.zw;
-				half2 appendResult100 = (half2(( _OpacityMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OpacityMaskTexV )));
-				half3 desaturateInitialColor118 = tex2D( _OpacityMaskTex, (( _OffsetMaskTexFrequencyToOpacityMaskTex )?( ( appendResult99 + uv_OpacityMaskTex ) ):( ( uv_OpacityMaskTex + appendResult100 ) )) ).rgb;
-				half desaturateDot118 = dot( desaturateInitialColor118, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar118 = lerp( desaturateInitialColor118, desaturateDot118.xxx, 1.0 );
-				half2 uv_AlphaTex1 = input.ase_texcoord2.xyz.xy * _AlphaTex1_ST.xy + _AlphaTex1_ST.zw;
-				half2 appendResult113 = (half2(( _AlphaTex1U * _TimeParameters.x ) , ( _TimeParameters.x * _AlphaTex1V )));
-				half3 desaturateInitialColor120 = tex2D( _AlphaTex1, ( uv_AlphaTex1 + appendResult113 ) ).rgb;
-				half desaturateDot120 = dot( desaturateInitialColor120, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar120 = lerp( desaturateInitialColor120, desaturateDot120.xxx, 1.0 );
-				half clampResult141 = clamp( ( _MaskAddBias + ( (( _OpacityMaskTexSwitch )?( (desaturateVar118).x ):( (desaturateVar136).x )) * (desaturateVar120).x ) ) , 0.0 , 1.0 );
-				half temp_output_128_0 = (0.0 + (clampResult141 - 0.0) * (2.0 - 0.0) / (1.0 - 0.0));
+				float2 uv_OffsetTex = input.ase_texcoord2.xyz.xy * _OffsetTex_ST.xy + _OffsetTex_ST.zw;
+				float2 appendResult88 = (float2(( _OffsetTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetTexV )));
+				float2 temp_output_96_0 = ( uv_OffsetTex + appendResult88 );
+				float3 lerpResult103 = lerp( float3( temp_output_96_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
+				float2 uv_OffsetMaskTex = input.ase_texcoord2.xyz.xy * _OffsetMaskTex_ST.xy + _OffsetMaskTex_ST.zw;
+				float2 appendResult99 = (float2(( _OffsetMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetMaskTexV )));
+				float4 temp_output_116_0 = ( tex2D( _OffsetTex, (( _OffsetTexDistortionUV )?( lerpResult103 ):( half3( temp_output_96_0 ,  0.0 ) )).xy ) * tex2D( _OffsetMaskTex, ( uv_OffsetMaskTex + appendResult99 ) ) );
+				float3 desaturateInitialColor136 = temp_output_116_0.rgb;
+				float desaturateDot136 = dot( desaturateInitialColor136, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar136 = lerp( desaturateInitialColor136, desaturateDot136.xxx, 1.0 );
+				float2 uv_OpacityMaskTex = input.ase_texcoord2.xyz.xy * _OpacityMaskTex_ST.xy + _OpacityMaskTex_ST.zw;
+				float2 appendResult100 = (float2(( _OpacityMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OpacityMaskTexV )));
+				float3 desaturateInitialColor118 = tex2D( _OpacityMaskTex, (( _OffsetMaskTexFrequencyToOpacityMaskTex )?( ( appendResult99 + uv_OpacityMaskTex ) ):( ( uv_OpacityMaskTex + appendResult100 ) )) ).rgb;
+				float desaturateDot118 = dot( desaturateInitialColor118, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar118 = lerp( desaturateInitialColor118, desaturateDot118.xxx, 1.0 );
+				float2 uv_AlphaTex1 = input.ase_texcoord2.xyz.xy * _AlphaTex1_ST.xy + _AlphaTex1_ST.zw;
+				float2 appendResult113 = (float2(( _AlphaTex1U * _TimeParameters.x ) , ( _TimeParameters.x * _AlphaTex1V )));
+				float3 desaturateInitialColor120 = tex2D( _AlphaTex1, ( uv_AlphaTex1 + appendResult113 ) ).rgb;
+				float desaturateDot120 = dot( desaturateInitialColor120, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar120 = lerp( desaturateInitialColor120, desaturateDot120.xxx, 1.0 );
+				float clampResult141 = clamp( ( _MaskAddBias + ( (( _OpacityMaskTexSwitch )?( (desaturateVar118).x ):( (desaturateVar136).x )) * (desaturateVar120).x ) ) , 0.0 , 1.0 );
+				float temp_output_128_0 = (0.0 + (clampResult141 - 0.0) * (2.0 - 0.0) / (1.0 - 0.0));
 				float4 screenPos = input.ase_texcoord7;
-				half4 ase_positionSSNorm = screenPos / screenPos.w;
+				float4 ase_positionSSNorm = screenPos / screenPos.w;
 				ase_positionSSNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_positionSSNorm.z : ase_positionSSNorm.z * 0.5 + 0.5;
-				half4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
-				half dither131 = Dither4x4Bayer( fmod( ase_positionSS_Pixel.x, 4 ), fmod( ase_positionSS_Pixel.y, 4 ) );
+				float4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
+				float dither131 = Dither4x4Bayer( fmod( ase_positionSS_Pixel.x, 4 ), fmod( ase_positionSS_Pixel.y, 4 ) );
 				dither131 = step( dither131, saturate( ( temp_output_128_0 + _DitherBias ) * 1.00001 ) );
 				
 
@@ -2942,16 +2942,16 @@ Shader "SinCourse/PBR简化"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
-			half4 _MainTex_ST;
-			half4 _SecTex_ST;
+			float4 _MainTex_ST;
+			float4 _SecTex_ST;
 			float4 _MainColor;
-			half4 _NormalTex_ST;
-			half4 _OffsetMaskTex_ST;
-			half4 _OpacityMaskTex_ST;
+			float4 _NormalTex_ST;
+			float4 _OffsetMaskTex_ST;
+			float4 _OpacityMaskTex_ST;
 			float4 _AllColor;
-			half4 _DistortionTex_ST;
-			half4 _AlphaTex1_ST;
-			half4 _OffsetTex_ST;
+			float4 _DistortionTex_ST;
+			float4 _AlphaTex1_ST;
+			float4 _OffsetTex_ST;
 			half _OffsetMaskTexFrequencyToOpacityMaskTex;
 			float _OpacityMaskTexV;
 			half _OpacityMaskTexSwitch;
@@ -3052,21 +3052,21 @@ Shader "SinCourse/PBR简化"
 				UNITY_TRANSFER_INSTANCE_ID(input, output);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
 
-				half2 uv_OffsetTex = input.ase_texcoord.xy * _OffsetTex_ST.xy + _OffsetTex_ST.zw;
-				half2 appendResult88 = (half2(( _OffsetTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetTexV )));
-				half2 temp_output_96_0 = ( uv_OffsetTex + appendResult88 );
-				half2 uv_DistortionTex = input.ase_texcoord.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
-				half2 uv2_DistortionTex = input.ase_texcoord1.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
-				half2 appendResult25 = (half2(_DistortionU , _DistortionV));
-				half3 desaturateInitialColor32 = tex2Dlod( _DistortionTex, float4( ( (( _Distortion2UV )?( uv2_DistortionTex ):( uv_DistortionTex )) + ( appendResult25 * _TimeParameters.x ) ), 0, 0.0) ).rgb;
-				half desaturateDot32 = dot( desaturateInitialColor32, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar32 = lerp( desaturateInitialColor32, desaturateDot32.xxx, 1.0 );
+				float2 uv_OffsetTex = input.ase_texcoord.xy * _OffsetTex_ST.xy + _OffsetTex_ST.zw;
+				float2 appendResult88 = (float2(( _OffsetTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetTexV )));
+				float2 temp_output_96_0 = ( uv_OffsetTex + appendResult88 );
+				float2 uv_DistortionTex = input.ase_texcoord.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
+				float2 uv2_DistortionTex = input.ase_texcoord1.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
+				float2 appendResult25 = (float2(_DistortionU , _DistortionV));
+				float3 desaturateInitialColor32 = tex2Dlod( _DistortionTex, float4( ( (( _Distortion2UV )?( uv2_DistortionTex ):( uv_DistortionTex )) + ( appendResult25 * _TimeParameters.x ) ), 0, 0.0) ).rgb;
+				float desaturateDot32 = dot( desaturateInitialColor32, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar32 = lerp( desaturateInitialColor32, desaturateDot32.xxx, 1.0 );
 				half3 DistortionUV34 = desaturateVar32;
 				half DistortionIndeisty35 = _DistortionIntensity;
-				half3 lerpResult103 = lerp( half3( temp_output_96_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
-				half2 uv_OffsetMaskTex = input.ase_texcoord.xy * _OffsetMaskTex_ST.xy + _OffsetMaskTex_ST.zw;
-				half2 appendResult99 = (half2(( _OffsetMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetMaskTexV )));
-				half4 temp_output_116_0 = ( tex2Dlod( _OffsetTex, float4( (( _OffsetTexDistortionUV )?( lerpResult103 ):( half3( temp_output_96_0 ,  0.0 ) )).xy, 0, 0.0) ) * tex2Dlod( _OffsetMaskTex, float4( ( uv_OffsetMaskTex + appendResult99 ), 0, 0.0) ) );
+				float3 lerpResult103 = lerp( float3( temp_output_96_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
+				float2 uv_OffsetMaskTex = input.ase_texcoord.xy * _OffsetMaskTex_ST.xy + _OffsetMaskTex_ST.zw;
+				float2 appendResult99 = (float2(( _OffsetMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetMaskTexV )));
+				float4 temp_output_116_0 = ( tex2Dlod( _OffsetTex, float4( (( _OffsetTexDistortionUV )?( lerpResult103 ):( half3( temp_output_96_0 ,  0.0 ) )).xy, 0, 0.0) ) * tex2Dlod( _OffsetMaskTex, float4( ( uv_OffsetMaskTex + appendResult99 ), 0, 0.0) ) );
 				
 				output.ase_texcoord5.xy = input.ase_texcoord.xy;
 				output.ase_texcoord5.zw = input.ase_texcoord1.xy;
@@ -3076,7 +3076,7 @@ Shader "SinCourse/PBR简化"
 					float3 defaultVertexValue = float3(0, 0, 0);
 				#endif
 
-				float3 vertexValue = ( temp_output_116_0 * half4( input.normalOS , 0.0 ) * _VertexOffsetIntensity ).rgb;
+				float3 vertexValue = ( temp_output_116_0 * float4( input.normalOS , 0.0 ) * _VertexOffsetIntensity ).rgb;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					input.positionOS.xyz = vertexValue;
@@ -3218,48 +3218,48 @@ Shader "SinCourse/PBR简化"
 					#endif
 				#endif
 
-				half2 uv_NormalTex = input.ase_texcoord5.xy * _NormalTex_ST.xy + _NormalTex_ST.zw;
-				half2 appendResult66 = (half2(( _NormalTexU * _TimeParameters.x ) , ( _TimeParameters.x * _NormalTexV )));
-				half2 temp_output_68_0 = ( uv_NormalTex + appendResult66 );
-				half2 uv_DistortionTex = input.ase_texcoord5.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
-				half2 uv2_DistortionTex = input.ase_texcoord5.zw * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
-				half2 appendResult25 = (half2(_DistortionU , _DistortionV));
-				half3 desaturateInitialColor32 = tex2D( _DistortionTex, ( (( _Distortion2UV )?( uv2_DistortionTex ):( uv_DistortionTex )) + ( appendResult25 * _TimeParameters.x ) ) ).rgb;
-				half desaturateDot32 = dot( desaturateInitialColor32, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar32 = lerp( desaturateInitialColor32, desaturateDot32.xxx, 1.0 );
+				float2 uv_NormalTex = input.ase_texcoord5.xy * _NormalTex_ST.xy + _NormalTex_ST.zw;
+				float2 appendResult66 = (float2(( _NormalTexU * _TimeParameters.x ) , ( _TimeParameters.x * _NormalTexV )));
+				float2 temp_output_68_0 = ( uv_NormalTex + appendResult66 );
+				float2 uv_DistortionTex = input.ase_texcoord5.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
+				float2 uv2_DistortionTex = input.ase_texcoord5.zw * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
+				float2 appendResult25 = (float2(_DistortionU , _DistortionV));
+				float3 desaturateInitialColor32 = tex2D( _DistortionTex, ( (( _Distortion2UV )?( uv2_DistortionTex ):( uv_DistortionTex )) + ( appendResult25 * _TimeParameters.x ) ) ).rgb;
+				float desaturateDot32 = dot( desaturateInitialColor32, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar32 = lerp( desaturateInitialColor32, desaturateDot32.xxx, 1.0 );
 				half3 DistortionUV34 = desaturateVar32;
 				half DistortionIndeisty35 = _DistortionIntensity;
-				half3 lerpResult71 = lerp( half3( temp_output_68_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
-				half3 unpack74 = UnpackNormalScale( tex2D( _NormalTex, (( _NormalTexDistortionUV )?( lerpResult71 ):( half3( temp_output_68_0 ,  0.0 ) )).xy ), _NormalIntensity );
+				float3 lerpResult71 = lerp( float3( temp_output_68_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
+				float3 unpack74 = UnpackNormalScale( tex2D( _NormalTex, (( _NormalTexDistortionUV )?( lerpResult71 ):( half3( temp_output_68_0 ,  0.0 ) )).xy ), _NormalIntensity );
 				unpack74.z = lerp( 1, unpack74.z, saturate(_NormalIntensity) );
-				half3 tex2DNode74 = unpack74;
+				float3 tex2DNode74 = unpack74;
 				
-				half2 uv_OffsetTex = input.ase_texcoord5.xy * _OffsetTex_ST.xy + _OffsetTex_ST.zw;
-				half2 appendResult88 = (half2(( _OffsetTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetTexV )));
-				half2 temp_output_96_0 = ( uv_OffsetTex + appendResult88 );
-				half3 lerpResult103 = lerp( half3( temp_output_96_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
-				half2 uv_OffsetMaskTex = input.ase_texcoord5.xy * _OffsetMaskTex_ST.xy + _OffsetMaskTex_ST.zw;
-				half2 appendResult99 = (half2(( _OffsetMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetMaskTexV )));
-				half4 temp_output_116_0 = ( tex2D( _OffsetTex, (( _OffsetTexDistortionUV )?( lerpResult103 ):( half3( temp_output_96_0 ,  0.0 ) )).xy ) * tex2D( _OffsetMaskTex, ( uv_OffsetMaskTex + appendResult99 ) ) );
-				half3 desaturateInitialColor136 = temp_output_116_0.rgb;
-				half desaturateDot136 = dot( desaturateInitialColor136, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar136 = lerp( desaturateInitialColor136, desaturateDot136.xxx, 1.0 );
-				half2 uv_OpacityMaskTex = input.ase_texcoord5.xy * _OpacityMaskTex_ST.xy + _OpacityMaskTex_ST.zw;
-				half2 appendResult100 = (half2(( _OpacityMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OpacityMaskTexV )));
-				half3 desaturateInitialColor118 = tex2D( _OpacityMaskTex, (( _OffsetMaskTexFrequencyToOpacityMaskTex )?( ( appendResult99 + uv_OpacityMaskTex ) ):( ( uv_OpacityMaskTex + appendResult100 ) )) ).rgb;
-				half desaturateDot118 = dot( desaturateInitialColor118, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar118 = lerp( desaturateInitialColor118, desaturateDot118.xxx, 1.0 );
-				half2 uv_AlphaTex1 = input.ase_texcoord5.xy * _AlphaTex1_ST.xy + _AlphaTex1_ST.zw;
-				half2 appendResult113 = (half2(( _AlphaTex1U * _TimeParameters.x ) , ( _TimeParameters.x * _AlphaTex1V )));
-				half3 desaturateInitialColor120 = tex2D( _AlphaTex1, ( uv_AlphaTex1 + appendResult113 ) ).rgb;
-				half desaturateDot120 = dot( desaturateInitialColor120, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar120 = lerp( desaturateInitialColor120, desaturateDot120.xxx, 1.0 );
-				half clampResult141 = clamp( ( _MaskAddBias + ( (( _OpacityMaskTexSwitch )?( (desaturateVar118).x ):( (desaturateVar136).x )) * (desaturateVar120).x ) ) , 0.0 , 1.0 );
-				half temp_output_128_0 = (0.0 + (clampResult141 - 0.0) * (2.0 - 0.0) / (1.0 - 0.0));
-				half4 ase_positionSSNorm = ScreenPos / ScreenPos.w;
+				float2 uv_OffsetTex = input.ase_texcoord5.xy * _OffsetTex_ST.xy + _OffsetTex_ST.zw;
+				float2 appendResult88 = (float2(( _OffsetTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetTexV )));
+				float2 temp_output_96_0 = ( uv_OffsetTex + appendResult88 );
+				float3 lerpResult103 = lerp( float3( temp_output_96_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
+				float2 uv_OffsetMaskTex = input.ase_texcoord5.xy * _OffsetMaskTex_ST.xy + _OffsetMaskTex_ST.zw;
+				float2 appendResult99 = (float2(( _OffsetMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetMaskTexV )));
+				float4 temp_output_116_0 = ( tex2D( _OffsetTex, (( _OffsetTexDistortionUV )?( lerpResult103 ):( half3( temp_output_96_0 ,  0.0 ) )).xy ) * tex2D( _OffsetMaskTex, ( uv_OffsetMaskTex + appendResult99 ) ) );
+				float3 desaturateInitialColor136 = temp_output_116_0.rgb;
+				float desaturateDot136 = dot( desaturateInitialColor136, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar136 = lerp( desaturateInitialColor136, desaturateDot136.xxx, 1.0 );
+				float2 uv_OpacityMaskTex = input.ase_texcoord5.xy * _OpacityMaskTex_ST.xy + _OpacityMaskTex_ST.zw;
+				float2 appendResult100 = (float2(( _OpacityMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OpacityMaskTexV )));
+				float3 desaturateInitialColor118 = tex2D( _OpacityMaskTex, (( _OffsetMaskTexFrequencyToOpacityMaskTex )?( ( appendResult99 + uv_OpacityMaskTex ) ):( ( uv_OpacityMaskTex + appendResult100 ) )) ).rgb;
+				float desaturateDot118 = dot( desaturateInitialColor118, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar118 = lerp( desaturateInitialColor118, desaturateDot118.xxx, 1.0 );
+				float2 uv_AlphaTex1 = input.ase_texcoord5.xy * _AlphaTex1_ST.xy + _AlphaTex1_ST.zw;
+				float2 appendResult113 = (float2(( _AlphaTex1U * _TimeParameters.x ) , ( _TimeParameters.x * _AlphaTex1V )));
+				float3 desaturateInitialColor120 = tex2D( _AlphaTex1, ( uv_AlphaTex1 + appendResult113 ) ).rgb;
+				float desaturateDot120 = dot( desaturateInitialColor120, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar120 = lerp( desaturateInitialColor120, desaturateDot120.xxx, 1.0 );
+				float clampResult141 = clamp( ( _MaskAddBias + ( (( _OpacityMaskTexSwitch )?( (desaturateVar118).x ):( (desaturateVar136).x )) * (desaturateVar120).x ) ) , 0.0 , 1.0 );
+				float temp_output_128_0 = (0.0 + (clampResult141 - 0.0) * (2.0 - 0.0) / (1.0 - 0.0));
+				float4 ase_positionSSNorm = ScreenPos / ScreenPos.w;
 				ase_positionSSNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_positionSSNorm.z : ase_positionSSNorm.z * 0.5 + 0.5;
-				half4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
-				half dither131 = Dither4x4Bayer( fmod( ase_positionSS_Pixel.x, 4 ), fmod( ase_positionSS_Pixel.y, 4 ) );
+				float4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
+				float dither131 = Dither4x4Bayer( fmod( ase_positionSS_Pixel.x, 4 ), fmod( ase_positionSS_Pixel.y, 4 ) );
 				dither131 = step( dither131, saturate( ( temp_output_128_0 + _DitherBias ) * 1.00001 ) );
 				
 
@@ -3475,16 +3475,16 @@ Shader "SinCourse/PBR简化"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
-			half4 _MainTex_ST;
-			half4 _SecTex_ST;
+			float4 _MainTex_ST;
+			float4 _SecTex_ST;
 			float4 _MainColor;
-			half4 _NormalTex_ST;
-			half4 _OffsetMaskTex_ST;
-			half4 _OpacityMaskTex_ST;
+			float4 _NormalTex_ST;
+			float4 _OffsetMaskTex_ST;
+			float4 _OpacityMaskTex_ST;
 			float4 _AllColor;
-			half4 _DistortionTex_ST;
-			half4 _AlphaTex1_ST;
-			half4 _OffsetTex_ST;
+			float4 _DistortionTex_ST;
+			float4 _AlphaTex1_ST;
+			float4 _OffsetTex_ST;
 			half _OffsetMaskTexFrequencyToOpacityMaskTex;
 			float _OpacityMaskTexV;
 			half _OpacityMaskTexSwitch;
@@ -3590,21 +3590,21 @@ Shader "SinCourse/PBR简化"
 				UNITY_TRANSFER_INSTANCE_ID(input, output);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
 
-				half2 uv_OffsetTex = input.texcoord.xy * _OffsetTex_ST.xy + _OffsetTex_ST.zw;
-				half2 appendResult88 = (half2(( _OffsetTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetTexV )));
-				half2 temp_output_96_0 = ( uv_OffsetTex + appendResult88 );
-				half2 uv_DistortionTex = input.texcoord.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
-				half2 uv2_DistortionTex = input.texcoord1.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
-				half2 appendResult25 = (half2(_DistortionU , _DistortionV));
-				half3 desaturateInitialColor32 = tex2Dlod( _DistortionTex, float4( ( (( _Distortion2UV )?( uv2_DistortionTex ):( uv_DistortionTex )) + ( appendResult25 * _TimeParameters.x ) ), 0, 0.0) ).rgb;
-				half desaturateDot32 = dot( desaturateInitialColor32, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar32 = lerp( desaturateInitialColor32, desaturateDot32.xxx, 1.0 );
+				float2 uv_OffsetTex = input.texcoord.xy * _OffsetTex_ST.xy + _OffsetTex_ST.zw;
+				float2 appendResult88 = (float2(( _OffsetTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetTexV )));
+				float2 temp_output_96_0 = ( uv_OffsetTex + appendResult88 );
+				float2 uv_DistortionTex = input.texcoord.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
+				float2 uv2_DistortionTex = input.texcoord1.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
+				float2 appendResult25 = (float2(_DistortionU , _DistortionV));
+				float3 desaturateInitialColor32 = tex2Dlod( _DistortionTex, float4( ( (( _Distortion2UV )?( uv2_DistortionTex ):( uv_DistortionTex )) + ( appendResult25 * _TimeParameters.x ) ), 0, 0.0) ).rgb;
+				float desaturateDot32 = dot( desaturateInitialColor32, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar32 = lerp( desaturateInitialColor32, desaturateDot32.xxx, 1.0 );
 				half3 DistortionUV34 = desaturateVar32;
 				half DistortionIndeisty35 = _DistortionIntensity;
-				half3 lerpResult103 = lerp( half3( temp_output_96_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
-				half2 uv_OffsetMaskTex = input.texcoord.xy * _OffsetMaskTex_ST.xy + _OffsetMaskTex_ST.zw;
-				half2 appendResult99 = (half2(( _OffsetMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetMaskTexV )));
-				half4 temp_output_116_0 = ( tex2Dlod( _OffsetTex, float4( (( _OffsetTexDistortionUV )?( lerpResult103 ):( half3( temp_output_96_0 ,  0.0 ) )).xy, 0, 0.0) ) * tex2Dlod( _OffsetMaskTex, float4( ( uv_OffsetMaskTex + appendResult99 ), 0, 0.0) ) );
+				float3 lerpResult103 = lerp( float3( temp_output_96_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
+				float2 uv_OffsetMaskTex = input.texcoord.xy * _OffsetMaskTex_ST.xy + _OffsetMaskTex_ST.zw;
+				float2 appendResult99 = (float2(( _OffsetMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetMaskTexV )));
+				float4 temp_output_116_0 = ( tex2Dlod( _OffsetTex, float4( (( _OffsetTexDistortionUV )?( lerpResult103 ):( half3( temp_output_96_0 ,  0.0 ) )).xy, 0, 0.0) ) * tex2Dlod( _OffsetMaskTex, float4( ( uv_OffsetMaskTex + appendResult99 ), 0, 0.0) ) );
 				
 				output.ase_texcoord8.xyz = input.texcoord.xyz;
 				output.ase_texcoord9.xy = input.texcoord1.xy;
@@ -3618,7 +3618,7 @@ Shader "SinCourse/PBR简化"
 					float3 defaultVertexValue = float3(0, 0, 0);
 				#endif
 
-				float3 vertexValue = ( temp_output_116_0 * half4( input.normalOS , 0.0 ) * _VertexOffsetIntensity ).rgb;
+				float3 vertexValue = ( temp_output_116_0 * float4( input.normalOS , 0.0 ) * _VertexOffsetIntensity ).rgb;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					input.positionOS.xyz = vertexValue;
@@ -3804,28 +3804,28 @@ Shader "SinCourse/PBR简化"
 					ShadowCoords = float4(0, 0, 0, 0);
 				#endif
 
-				half2 uv_NormalTex = input.ase_texcoord8.xyz.xy * _NormalTex_ST.xy + _NormalTex_ST.zw;
-				half2 appendResult66 = (half2(( _NormalTexU * _TimeParameters.x ) , ( _TimeParameters.x * _NormalTexV )));
-				half2 temp_output_68_0 = ( uv_NormalTex + appendResult66 );
-				half2 uv_DistortionTex = input.ase_texcoord8.xyz.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
-				half2 uv2_DistortionTex = input.ase_texcoord9.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
-				half2 appendResult25 = (half2(_DistortionU , _DistortionV));
-				half3 desaturateInitialColor32 = tex2D( _DistortionTex, ( (( _Distortion2UV )?( uv2_DistortionTex ):( uv_DistortionTex )) + ( appendResult25 * _TimeParameters.x ) ) ).rgb;
-				half desaturateDot32 = dot( desaturateInitialColor32, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar32 = lerp( desaturateInitialColor32, desaturateDot32.xxx, 1.0 );
+				float2 uv_NormalTex = input.ase_texcoord8.xyz.xy * _NormalTex_ST.xy + _NormalTex_ST.zw;
+				float2 appendResult66 = (float2(( _NormalTexU * _TimeParameters.x ) , ( _TimeParameters.x * _NormalTexV )));
+				float2 temp_output_68_0 = ( uv_NormalTex + appendResult66 );
+				float2 uv_DistortionTex = input.ase_texcoord8.xyz.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
+				float2 uv2_DistortionTex = input.ase_texcoord9.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
+				float2 appendResult25 = (float2(_DistortionU , _DistortionV));
+				float3 desaturateInitialColor32 = tex2D( _DistortionTex, ( (( _Distortion2UV )?( uv2_DistortionTex ):( uv_DistortionTex )) + ( appendResult25 * _TimeParameters.x ) ) ).rgb;
+				float desaturateDot32 = dot( desaturateInitialColor32, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar32 = lerp( desaturateInitialColor32, desaturateDot32.xxx, 1.0 );
 				half3 DistortionUV34 = desaturateVar32;
 				half DistortionIndeisty35 = _DistortionIntensity;
-				half3 lerpResult71 = lerp( half3( temp_output_68_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
-				half3 unpack74 = UnpackNormalScale( tex2D( _NormalTex, (( _NormalTexDistortionUV )?( lerpResult71 ):( half3( temp_output_68_0 ,  0.0 ) )).xy ), _NormalIntensity );
+				float3 lerpResult71 = lerp( float3( temp_output_68_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
+				float3 unpack74 = UnpackNormalScale( tex2D( _NormalTex, (( _NormalTexDistortionUV )?( lerpResult71 ):( half3( temp_output_68_0 ,  0.0 ) )).xy ), _NormalIntensity );
 				unpack74.z = lerp( 1, unpack74.z, saturate(_NormalIntensity) );
-				half3 tex2DNode74 = unpack74;
-				half3 tanToWorld0 = float3( WorldTangent.x, WorldBiTangent.x, WorldNormal.x );
-				half3 tanToWorld1 = float3( WorldTangent.y, WorldBiTangent.y, WorldNormal.y );
-				half3 tanToWorld2 = float3( WorldTangent.z, WorldBiTangent.z, WorldNormal.z );
-				half3 worldRefl37 = normalize( reflect( -WorldViewDirection, float3( dot( tanToWorld0, tex2DNode74 ), dot( tanToWorld1, tex2DNode74 ), dot( tanToWorld2, tex2DNode74 ) ) ) );
-				half2 uv_MainTex = input.ase_texcoord8.xyz.xy * _MainTex_ST.xy + _MainTex_ST.zw;
-				half2 appendResult55 = (half2(( _MainTexU * _TimeParameters.x ) , ( _TimeParameters.x * _MainTexV )));
-				half4 temp_output_48_0 = ( ( ( _CubeMapIntensity * texCUBE( _CubeMapTex, worldRefl37 ) ) + ( _MainColor * tex2D( _MainTex, ( uv_MainTex + appendResult55 ) ) ) ) * _AllColor );
+				float3 tex2DNode74 = unpack74;
+				float3 tanToWorld0 = float3( WorldTangent.x, WorldBiTangent.x, WorldNormal.x );
+				float3 tanToWorld1 = float3( WorldTangent.y, WorldBiTangent.y, WorldNormal.y );
+				float3 tanToWorld2 = float3( WorldTangent.z, WorldBiTangent.z, WorldNormal.z );
+				float3 worldRefl37 = normalize( reflect( -WorldViewDirection, float3( dot( tanToWorld0, tex2DNode74 ), dot( tanToWorld1, tex2DNode74 ), dot( tanToWorld2, tex2DNode74 ) ) ) );
+				float2 uv_MainTex = input.ase_texcoord8.xyz.xy * _MainTex_ST.xy + _MainTex_ST.zw;
+				float2 appendResult55 = (float2(( _MainTexU * _TimeParameters.x ) , ( _TimeParameters.x * _MainTexV )));
+				float4 temp_output_48_0 = ( ( ( _CubeMapIntensity * texCUBE( _CubeMapTex, worldRefl37 ) ) + ( _MainColor * tex2D( _MainTex, ( uv_MainTex + appendResult55 ) ) ) ) * _AllColor );
 				#ifdef _ALBEDOOFF_ON
 				float4 staticSwitch59 = float4( 0,0,0,0 );
 				#else
@@ -3838,38 +3838,38 @@ Shader "SinCourse/PBR简化"
 				float4 staticSwitch58 = float4( 0,0,0,0 );
 				#endif
 				
-				half2 uv_SecTex = input.ase_texcoord8.xyz.xy * _SecTex_ST.xy + _SecTex_ST.zw;
-				half2 appendResult18 = (half2(( _SecTexU * _TimeParameters.x ) , ( _TimeParameters.x * _SecTexV )));
-				half2 temp_output_19_0 = ( uv_SecTex + appendResult18 );
-				half3 lerpResult143 = lerp( half3( temp_output_19_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
-				half4 tex2DNode4 = tex2D( _SecTex, (( _SecTexDistortionUV )?( lerpResult143 ):( half3( temp_output_19_0 ,  0.0 ) )).xy );
+				float2 uv_SecTex = input.ase_texcoord8.xyz.xy * _SecTex_ST.xy + _SecTex_ST.zw;
+				float2 appendResult18 = (float2(( _SecTexU * _TimeParameters.x ) , ( _TimeParameters.x * _SecTexV )));
+				float2 temp_output_19_0 = ( uv_SecTex + appendResult18 );
+				float3 lerpResult143 = lerp( float3( temp_output_19_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
+				float4 tex2DNode4 = tex2D( _SecTex, (( _SecTexDistortionUV )?( lerpResult143 ):( half3( temp_output_19_0 ,  0.0 ) )).xy );
 				
-				half2 uv_OffsetTex = input.ase_texcoord8.xyz.xy * _OffsetTex_ST.xy + _OffsetTex_ST.zw;
-				half2 appendResult88 = (half2(( _OffsetTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetTexV )));
-				half2 temp_output_96_0 = ( uv_OffsetTex + appendResult88 );
-				half3 lerpResult103 = lerp( half3( temp_output_96_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
-				half2 uv_OffsetMaskTex = input.ase_texcoord8.xyz.xy * _OffsetMaskTex_ST.xy + _OffsetMaskTex_ST.zw;
-				half2 appendResult99 = (half2(( _OffsetMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetMaskTexV )));
-				half4 temp_output_116_0 = ( tex2D( _OffsetTex, (( _OffsetTexDistortionUV )?( lerpResult103 ):( half3( temp_output_96_0 ,  0.0 ) )).xy ) * tex2D( _OffsetMaskTex, ( uv_OffsetMaskTex + appendResult99 ) ) );
-				half3 desaturateInitialColor136 = temp_output_116_0.rgb;
-				half desaturateDot136 = dot( desaturateInitialColor136, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar136 = lerp( desaturateInitialColor136, desaturateDot136.xxx, 1.0 );
-				half2 uv_OpacityMaskTex = input.ase_texcoord8.xyz.xy * _OpacityMaskTex_ST.xy + _OpacityMaskTex_ST.zw;
-				half2 appendResult100 = (half2(( _OpacityMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OpacityMaskTexV )));
-				half3 desaturateInitialColor118 = tex2D( _OpacityMaskTex, (( _OffsetMaskTexFrequencyToOpacityMaskTex )?( ( appendResult99 + uv_OpacityMaskTex ) ):( ( uv_OpacityMaskTex + appendResult100 ) )) ).rgb;
-				half desaturateDot118 = dot( desaturateInitialColor118, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar118 = lerp( desaturateInitialColor118, desaturateDot118.xxx, 1.0 );
-				half2 uv_AlphaTex1 = input.ase_texcoord8.xyz.xy * _AlphaTex1_ST.xy + _AlphaTex1_ST.zw;
-				half2 appendResult113 = (half2(( _AlphaTex1U * _TimeParameters.x ) , ( _TimeParameters.x * _AlphaTex1V )));
-				half3 desaturateInitialColor120 = tex2D( _AlphaTex1, ( uv_AlphaTex1 + appendResult113 ) ).rgb;
-				half desaturateDot120 = dot( desaturateInitialColor120, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar120 = lerp( desaturateInitialColor120, desaturateDot120.xxx, 1.0 );
-				half clampResult141 = clamp( ( _MaskAddBias + ( (( _OpacityMaskTexSwitch )?( (desaturateVar118).x ):( (desaturateVar136).x )) * (desaturateVar120).x ) ) , 0.0 , 1.0 );
-				half temp_output_128_0 = (0.0 + (clampResult141 - 0.0) * (2.0 - 0.0) / (1.0 - 0.0));
-				half4 ase_positionSSNorm = ScreenPos / ScreenPos.w;
+				float2 uv_OffsetTex = input.ase_texcoord8.xyz.xy * _OffsetTex_ST.xy + _OffsetTex_ST.zw;
+				float2 appendResult88 = (float2(( _OffsetTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetTexV )));
+				float2 temp_output_96_0 = ( uv_OffsetTex + appendResult88 );
+				float3 lerpResult103 = lerp( float3( temp_output_96_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
+				float2 uv_OffsetMaskTex = input.ase_texcoord8.xyz.xy * _OffsetMaskTex_ST.xy + _OffsetMaskTex_ST.zw;
+				float2 appendResult99 = (float2(( _OffsetMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetMaskTexV )));
+				float4 temp_output_116_0 = ( tex2D( _OffsetTex, (( _OffsetTexDistortionUV )?( lerpResult103 ):( half3( temp_output_96_0 ,  0.0 ) )).xy ) * tex2D( _OffsetMaskTex, ( uv_OffsetMaskTex + appendResult99 ) ) );
+				float3 desaturateInitialColor136 = temp_output_116_0.rgb;
+				float desaturateDot136 = dot( desaturateInitialColor136, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar136 = lerp( desaturateInitialColor136, desaturateDot136.xxx, 1.0 );
+				float2 uv_OpacityMaskTex = input.ase_texcoord8.xyz.xy * _OpacityMaskTex_ST.xy + _OpacityMaskTex_ST.zw;
+				float2 appendResult100 = (float2(( _OpacityMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OpacityMaskTexV )));
+				float3 desaturateInitialColor118 = tex2D( _OpacityMaskTex, (( _OffsetMaskTexFrequencyToOpacityMaskTex )?( ( appendResult99 + uv_OpacityMaskTex ) ):( ( uv_OpacityMaskTex + appendResult100 ) )) ).rgb;
+				float desaturateDot118 = dot( desaturateInitialColor118, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar118 = lerp( desaturateInitialColor118, desaturateDot118.xxx, 1.0 );
+				float2 uv_AlphaTex1 = input.ase_texcoord8.xyz.xy * _AlphaTex1_ST.xy + _AlphaTex1_ST.zw;
+				float2 appendResult113 = (float2(( _AlphaTex1U * _TimeParameters.x ) , ( _TimeParameters.x * _AlphaTex1V )));
+				float3 desaturateInitialColor120 = tex2D( _AlphaTex1, ( uv_AlphaTex1 + appendResult113 ) ).rgb;
+				float desaturateDot120 = dot( desaturateInitialColor120, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar120 = lerp( desaturateInitialColor120, desaturateDot120.xxx, 1.0 );
+				float clampResult141 = clamp( ( _MaskAddBias + ( (( _OpacityMaskTexSwitch )?( (desaturateVar118).x ):( (desaturateVar136).x )) * (desaturateVar120).x ) ) , 0.0 , 1.0 );
+				float temp_output_128_0 = (0.0 + (clampResult141 - 0.0) * (2.0 - 0.0) / (1.0 - 0.0));
+				float4 ase_positionSSNorm = ScreenPos / ScreenPos.w;
 				ase_positionSSNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_positionSSNorm.z : ase_positionSSNorm.z * 0.5 + 0.5;
-				half4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
-				half dither131 = Dither4x4Bayer( fmod( ase_positionSS_Pixel.x, 4 ), fmod( ase_positionSS_Pixel.y, 4 ) );
+				float4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
+				float dither131 = Dither4x4Bayer( fmod( ase_positionSS_Pixel.x, 4 ), fmod( ase_positionSS_Pixel.y, 4 ) );
 				dither131 = step( dither131, saturate( ( temp_output_128_0 + _DitherBias ) * 1.00001 ) );
 				
 
@@ -4074,16 +4074,16 @@ Shader "SinCourse/PBR简化"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
-			half4 _MainTex_ST;
-			half4 _SecTex_ST;
+			float4 _MainTex_ST;
+			float4 _SecTex_ST;
 			float4 _MainColor;
-			half4 _NormalTex_ST;
-			half4 _OffsetMaskTex_ST;
-			half4 _OpacityMaskTex_ST;
+			float4 _NormalTex_ST;
+			float4 _OffsetMaskTex_ST;
+			float4 _OpacityMaskTex_ST;
 			float4 _AllColor;
-			half4 _DistortionTex_ST;
-			half4 _AlphaTex1_ST;
-			half4 _OffsetTex_ST;
+			float4 _DistortionTex_ST;
+			float4 _AlphaTex1_ST;
+			float4 _OffsetTex_ST;
 			half _OffsetMaskTexFrequencyToOpacityMaskTex;
 			float _OpacityMaskTexV;
 			half _OpacityMaskTexSwitch;
@@ -4191,21 +4191,21 @@ Shader "SinCourse/PBR简化"
 				UNITY_TRANSFER_INSTANCE_ID(input, output);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
 
-				half2 uv_OffsetTex = input.ase_texcoord.xy * _OffsetTex_ST.xy + _OffsetTex_ST.zw;
-				half2 appendResult88 = (half2(( _OffsetTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetTexV )));
-				half2 temp_output_96_0 = ( uv_OffsetTex + appendResult88 );
-				half2 uv_DistortionTex = input.ase_texcoord.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
-				half2 uv2_DistortionTex = input.ase_texcoord1.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
-				half2 appendResult25 = (half2(_DistortionU , _DistortionV));
-				half3 desaturateInitialColor32 = tex2Dlod( _DistortionTex, float4( ( (( _Distortion2UV )?( uv2_DistortionTex ):( uv_DistortionTex )) + ( appendResult25 * _TimeParameters.x ) ), 0, 0.0) ).rgb;
-				half desaturateDot32 = dot( desaturateInitialColor32, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar32 = lerp( desaturateInitialColor32, desaturateDot32.xxx, 1.0 );
+				float2 uv_OffsetTex = input.ase_texcoord.xy * _OffsetTex_ST.xy + _OffsetTex_ST.zw;
+				float2 appendResult88 = (float2(( _OffsetTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetTexV )));
+				float2 temp_output_96_0 = ( uv_OffsetTex + appendResult88 );
+				float2 uv_DistortionTex = input.ase_texcoord.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
+				float2 uv2_DistortionTex = input.ase_texcoord1.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
+				float2 appendResult25 = (float2(_DistortionU , _DistortionV));
+				float3 desaturateInitialColor32 = tex2Dlod( _DistortionTex, float4( ( (( _Distortion2UV )?( uv2_DistortionTex ):( uv_DistortionTex )) + ( appendResult25 * _TimeParameters.x ) ), 0, 0.0) ).rgb;
+				float desaturateDot32 = dot( desaturateInitialColor32, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar32 = lerp( desaturateInitialColor32, desaturateDot32.xxx, 1.0 );
 				half3 DistortionUV34 = desaturateVar32;
 				half DistortionIndeisty35 = _DistortionIntensity;
-				half3 lerpResult103 = lerp( half3( temp_output_96_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
-				half2 uv_OffsetMaskTex = input.ase_texcoord.xy * _OffsetMaskTex_ST.xy + _OffsetMaskTex_ST.zw;
-				half2 appendResult99 = (half2(( _OffsetMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetMaskTexV )));
-				half4 temp_output_116_0 = ( tex2Dlod( _OffsetTex, float4( (( _OffsetTexDistortionUV )?( lerpResult103 ):( half3( temp_output_96_0 ,  0.0 ) )).xy, 0, 0.0) ) * tex2Dlod( _OffsetMaskTex, float4( ( uv_OffsetMaskTex + appendResult99 ), 0, 0.0) ) );
+				float3 lerpResult103 = lerp( float3( temp_output_96_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
+				float2 uv_OffsetMaskTex = input.ase_texcoord.xy * _OffsetMaskTex_ST.xy + _OffsetMaskTex_ST.zw;
+				float2 appendResult99 = (float2(( _OffsetMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetMaskTexV )));
+				float4 temp_output_116_0 = ( tex2Dlod( _OffsetTex, float4( (( _OffsetTexDistortionUV )?( lerpResult103 ):( half3( temp_output_96_0 ,  0.0 ) )).xy, 0, 0.0) ) * tex2Dlod( _OffsetMaskTex, float4( ( uv_OffsetMaskTex + appendResult99 ), 0, 0.0) ) );
 				
 				float4 ase_positionCS = TransformObjectToHClip( ( input.positionOS ).xyz );
 				float4 screenPos = ComputeScreenPos( ase_positionCS );
@@ -4220,7 +4220,7 @@ Shader "SinCourse/PBR简化"
 					float3 defaultVertexValue = float3(0, 0, 0);
 				#endif
 
-				float3 vertexValue = ( temp_output_116_0 * half4( input.normalOS , 0.0 ) * _VertexOffsetIntensity ).rgb;
+				float3 vertexValue = ( temp_output_116_0 * float4( input.normalOS , 0.0 ) * _VertexOffsetIntensity ).rgb;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					input.positionOS.xyz = vertexValue;
@@ -4324,41 +4324,41 @@ Shader "SinCourse/PBR简化"
 			{
 				SurfaceDescription surfaceDescription = (SurfaceDescription)0;
 
-				half2 uv_OffsetTex = input.ase_texcoord.xy * _OffsetTex_ST.xy + _OffsetTex_ST.zw;
-				half2 appendResult88 = (half2(( _OffsetTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetTexV )));
-				half2 temp_output_96_0 = ( uv_OffsetTex + appendResult88 );
-				half2 uv_DistortionTex = input.ase_texcoord.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
-				half2 uv2_DistortionTex = input.ase_texcoord.zw * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
-				half2 appendResult25 = (half2(_DistortionU , _DistortionV));
-				half3 desaturateInitialColor32 = tex2D( _DistortionTex, ( (( _Distortion2UV )?( uv2_DistortionTex ):( uv_DistortionTex )) + ( appendResult25 * _TimeParameters.x ) ) ).rgb;
-				half desaturateDot32 = dot( desaturateInitialColor32, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar32 = lerp( desaturateInitialColor32, desaturateDot32.xxx, 1.0 );
+				float2 uv_OffsetTex = input.ase_texcoord.xy * _OffsetTex_ST.xy + _OffsetTex_ST.zw;
+				float2 appendResult88 = (float2(( _OffsetTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetTexV )));
+				float2 temp_output_96_0 = ( uv_OffsetTex + appendResult88 );
+				float2 uv_DistortionTex = input.ase_texcoord.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
+				float2 uv2_DistortionTex = input.ase_texcoord.zw * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
+				float2 appendResult25 = (float2(_DistortionU , _DistortionV));
+				float3 desaturateInitialColor32 = tex2D( _DistortionTex, ( (( _Distortion2UV )?( uv2_DistortionTex ):( uv_DistortionTex )) + ( appendResult25 * _TimeParameters.x ) ) ).rgb;
+				float desaturateDot32 = dot( desaturateInitialColor32, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar32 = lerp( desaturateInitialColor32, desaturateDot32.xxx, 1.0 );
 				half3 DistortionUV34 = desaturateVar32;
 				half DistortionIndeisty35 = _DistortionIntensity;
-				half3 lerpResult103 = lerp( half3( temp_output_96_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
-				half2 uv_OffsetMaskTex = input.ase_texcoord.xy * _OffsetMaskTex_ST.xy + _OffsetMaskTex_ST.zw;
-				half2 appendResult99 = (half2(( _OffsetMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetMaskTexV )));
-				half4 temp_output_116_0 = ( tex2D( _OffsetTex, (( _OffsetTexDistortionUV )?( lerpResult103 ):( half3( temp_output_96_0 ,  0.0 ) )).xy ) * tex2D( _OffsetMaskTex, ( uv_OffsetMaskTex + appendResult99 ) ) );
-				half3 desaturateInitialColor136 = temp_output_116_0.rgb;
-				half desaturateDot136 = dot( desaturateInitialColor136, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar136 = lerp( desaturateInitialColor136, desaturateDot136.xxx, 1.0 );
-				half2 uv_OpacityMaskTex = input.ase_texcoord.xy * _OpacityMaskTex_ST.xy + _OpacityMaskTex_ST.zw;
-				half2 appendResult100 = (half2(( _OpacityMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OpacityMaskTexV )));
-				half3 desaturateInitialColor118 = tex2D( _OpacityMaskTex, (( _OffsetMaskTexFrequencyToOpacityMaskTex )?( ( appendResult99 + uv_OpacityMaskTex ) ):( ( uv_OpacityMaskTex + appendResult100 ) )) ).rgb;
-				half desaturateDot118 = dot( desaturateInitialColor118, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar118 = lerp( desaturateInitialColor118, desaturateDot118.xxx, 1.0 );
-				half2 uv_AlphaTex1 = input.ase_texcoord.xy * _AlphaTex1_ST.xy + _AlphaTex1_ST.zw;
-				half2 appendResult113 = (half2(( _AlphaTex1U * _TimeParameters.x ) , ( _TimeParameters.x * _AlphaTex1V )));
-				half3 desaturateInitialColor120 = tex2D( _AlphaTex1, ( uv_AlphaTex1 + appendResult113 ) ).rgb;
-				half desaturateDot120 = dot( desaturateInitialColor120, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar120 = lerp( desaturateInitialColor120, desaturateDot120.xxx, 1.0 );
-				half clampResult141 = clamp( ( _MaskAddBias + ( (( _OpacityMaskTexSwitch )?( (desaturateVar118).x ):( (desaturateVar136).x )) * (desaturateVar120).x ) ) , 0.0 , 1.0 );
-				half temp_output_128_0 = (0.0 + (clampResult141 - 0.0) * (2.0 - 0.0) / (1.0 - 0.0));
+				float3 lerpResult103 = lerp( float3( temp_output_96_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
+				float2 uv_OffsetMaskTex = input.ase_texcoord.xy * _OffsetMaskTex_ST.xy + _OffsetMaskTex_ST.zw;
+				float2 appendResult99 = (float2(( _OffsetMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetMaskTexV )));
+				float4 temp_output_116_0 = ( tex2D( _OffsetTex, (( _OffsetTexDistortionUV )?( lerpResult103 ):( half3( temp_output_96_0 ,  0.0 ) )).xy ) * tex2D( _OffsetMaskTex, ( uv_OffsetMaskTex + appendResult99 ) ) );
+				float3 desaturateInitialColor136 = temp_output_116_0.rgb;
+				float desaturateDot136 = dot( desaturateInitialColor136, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar136 = lerp( desaturateInitialColor136, desaturateDot136.xxx, 1.0 );
+				float2 uv_OpacityMaskTex = input.ase_texcoord.xy * _OpacityMaskTex_ST.xy + _OpacityMaskTex_ST.zw;
+				float2 appendResult100 = (float2(( _OpacityMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OpacityMaskTexV )));
+				float3 desaturateInitialColor118 = tex2D( _OpacityMaskTex, (( _OffsetMaskTexFrequencyToOpacityMaskTex )?( ( appendResult99 + uv_OpacityMaskTex ) ):( ( uv_OpacityMaskTex + appendResult100 ) )) ).rgb;
+				float desaturateDot118 = dot( desaturateInitialColor118, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar118 = lerp( desaturateInitialColor118, desaturateDot118.xxx, 1.0 );
+				float2 uv_AlphaTex1 = input.ase_texcoord.xy * _AlphaTex1_ST.xy + _AlphaTex1_ST.zw;
+				float2 appendResult113 = (float2(( _AlphaTex1U * _TimeParameters.x ) , ( _TimeParameters.x * _AlphaTex1V )));
+				float3 desaturateInitialColor120 = tex2D( _AlphaTex1, ( uv_AlphaTex1 + appendResult113 ) ).rgb;
+				float desaturateDot120 = dot( desaturateInitialColor120, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar120 = lerp( desaturateInitialColor120, desaturateDot120.xxx, 1.0 );
+				float clampResult141 = clamp( ( _MaskAddBias + ( (( _OpacityMaskTexSwitch )?( (desaturateVar118).x ):( (desaturateVar136).x )) * (desaturateVar120).x ) ) , 0.0 , 1.0 );
+				float temp_output_128_0 = (0.0 + (clampResult141 - 0.0) * (2.0 - 0.0) / (1.0 - 0.0));
 				float4 screenPos = input.ase_texcoord1;
-				half4 ase_positionSSNorm = screenPos / screenPos.w;
+				float4 ase_positionSSNorm = screenPos / screenPos.w;
 				ase_positionSSNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_positionSSNorm.z : ase_positionSSNorm.z * 0.5 + 0.5;
-				half4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
-				half dither131 = Dither4x4Bayer( fmod( ase_positionSS_Pixel.x, 4 ), fmod( ase_positionSS_Pixel.y, 4 ) );
+				float4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
+				float dither131 = Dither4x4Bayer( fmod( ase_positionSS_Pixel.x, 4 ), fmod( ase_positionSS_Pixel.y, 4 ) );
 				dither131 = step( dither131, saturate( ( temp_output_128_0 + _DitherBias ) * 1.00001 ) );
 				
 
@@ -4472,16 +4472,16 @@ Shader "SinCourse/PBR简化"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
-			half4 _MainTex_ST;
-			half4 _SecTex_ST;
+			float4 _MainTex_ST;
+			float4 _SecTex_ST;
 			float4 _MainColor;
-			half4 _NormalTex_ST;
-			half4 _OffsetMaskTex_ST;
-			half4 _OpacityMaskTex_ST;
+			float4 _NormalTex_ST;
+			float4 _OffsetMaskTex_ST;
+			float4 _OpacityMaskTex_ST;
 			float4 _AllColor;
-			half4 _DistortionTex_ST;
-			half4 _AlphaTex1_ST;
-			half4 _OffsetTex_ST;
+			float4 _DistortionTex_ST;
+			float4 _AlphaTex1_ST;
+			float4 _OffsetTex_ST;
 			half _OffsetMaskTexFrequencyToOpacityMaskTex;
 			float _OpacityMaskTexV;
 			half _OpacityMaskTexSwitch;
@@ -4589,21 +4589,21 @@ Shader "SinCourse/PBR简化"
 				UNITY_TRANSFER_INSTANCE_ID(input, output);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
 
-				half2 uv_OffsetTex = input.ase_texcoord.xy * _OffsetTex_ST.xy + _OffsetTex_ST.zw;
-				half2 appendResult88 = (half2(( _OffsetTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetTexV )));
-				half2 temp_output_96_0 = ( uv_OffsetTex + appendResult88 );
-				half2 uv_DistortionTex = input.ase_texcoord.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
-				half2 uv2_DistortionTex = input.ase_texcoord1.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
-				half2 appendResult25 = (half2(_DistortionU , _DistortionV));
-				half3 desaturateInitialColor32 = tex2Dlod( _DistortionTex, float4( ( (( _Distortion2UV )?( uv2_DistortionTex ):( uv_DistortionTex )) + ( appendResult25 * _TimeParameters.x ) ), 0, 0.0) ).rgb;
-				half desaturateDot32 = dot( desaturateInitialColor32, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar32 = lerp( desaturateInitialColor32, desaturateDot32.xxx, 1.0 );
+				float2 uv_OffsetTex = input.ase_texcoord.xy * _OffsetTex_ST.xy + _OffsetTex_ST.zw;
+				float2 appendResult88 = (float2(( _OffsetTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetTexV )));
+				float2 temp_output_96_0 = ( uv_OffsetTex + appendResult88 );
+				float2 uv_DistortionTex = input.ase_texcoord.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
+				float2 uv2_DistortionTex = input.ase_texcoord1.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
+				float2 appendResult25 = (float2(_DistortionU , _DistortionV));
+				float3 desaturateInitialColor32 = tex2Dlod( _DistortionTex, float4( ( (( _Distortion2UV )?( uv2_DistortionTex ):( uv_DistortionTex )) + ( appendResult25 * _TimeParameters.x ) ), 0, 0.0) ).rgb;
+				float desaturateDot32 = dot( desaturateInitialColor32, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar32 = lerp( desaturateInitialColor32, desaturateDot32.xxx, 1.0 );
 				half3 DistortionUV34 = desaturateVar32;
 				half DistortionIndeisty35 = _DistortionIntensity;
-				half3 lerpResult103 = lerp( half3( temp_output_96_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
-				half2 uv_OffsetMaskTex = input.ase_texcoord.xy * _OffsetMaskTex_ST.xy + _OffsetMaskTex_ST.zw;
-				half2 appendResult99 = (half2(( _OffsetMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetMaskTexV )));
-				half4 temp_output_116_0 = ( tex2Dlod( _OffsetTex, float4( (( _OffsetTexDistortionUV )?( lerpResult103 ):( half3( temp_output_96_0 ,  0.0 ) )).xy, 0, 0.0) ) * tex2Dlod( _OffsetMaskTex, float4( ( uv_OffsetMaskTex + appendResult99 ), 0, 0.0) ) );
+				float3 lerpResult103 = lerp( float3( temp_output_96_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
+				float2 uv_OffsetMaskTex = input.ase_texcoord.xy * _OffsetMaskTex_ST.xy + _OffsetMaskTex_ST.zw;
+				float2 appendResult99 = (float2(( _OffsetMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetMaskTexV )));
+				float4 temp_output_116_0 = ( tex2Dlod( _OffsetTex, float4( (( _OffsetTexDistortionUV )?( lerpResult103 ):( half3( temp_output_96_0 ,  0.0 ) )).xy, 0, 0.0) ) * tex2Dlod( _OffsetMaskTex, float4( ( uv_OffsetMaskTex + appendResult99 ), 0, 0.0) ) );
 				
 				float4 ase_positionCS = TransformObjectToHClip( ( input.positionOS ).xyz );
 				float4 screenPos = ComputeScreenPos( ase_positionCS );
@@ -4618,7 +4618,7 @@ Shader "SinCourse/PBR简化"
 					float3 defaultVertexValue = float3(0, 0, 0);
 				#endif
 
-				float3 vertexValue = ( temp_output_116_0 * half4( input.normalOS , 0.0 ) * _VertexOffsetIntensity ).rgb;
+				float3 vertexValue = ( temp_output_116_0 * float4( input.normalOS , 0.0 ) * _VertexOffsetIntensity ).rgb;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					input.positionOS.xyz = vertexValue;
@@ -4721,41 +4721,41 @@ Shader "SinCourse/PBR简化"
 			{
 				SurfaceDescription surfaceDescription = (SurfaceDescription)0;
 
-				half2 uv_OffsetTex = input.ase_texcoord.xy * _OffsetTex_ST.xy + _OffsetTex_ST.zw;
-				half2 appendResult88 = (half2(( _OffsetTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetTexV )));
-				half2 temp_output_96_0 = ( uv_OffsetTex + appendResult88 );
-				half2 uv_DistortionTex = input.ase_texcoord.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
-				half2 uv2_DistortionTex = input.ase_texcoord.zw * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
-				half2 appendResult25 = (half2(_DistortionU , _DistortionV));
-				half3 desaturateInitialColor32 = tex2D( _DistortionTex, ( (( _Distortion2UV )?( uv2_DistortionTex ):( uv_DistortionTex )) + ( appendResult25 * _TimeParameters.x ) ) ).rgb;
-				half desaturateDot32 = dot( desaturateInitialColor32, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar32 = lerp( desaturateInitialColor32, desaturateDot32.xxx, 1.0 );
+				float2 uv_OffsetTex = input.ase_texcoord.xy * _OffsetTex_ST.xy + _OffsetTex_ST.zw;
+				float2 appendResult88 = (float2(( _OffsetTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetTexV )));
+				float2 temp_output_96_0 = ( uv_OffsetTex + appendResult88 );
+				float2 uv_DistortionTex = input.ase_texcoord.xy * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
+				float2 uv2_DistortionTex = input.ase_texcoord.zw * _DistortionTex_ST.xy + _DistortionTex_ST.zw;
+				float2 appendResult25 = (float2(_DistortionU , _DistortionV));
+				float3 desaturateInitialColor32 = tex2D( _DistortionTex, ( (( _Distortion2UV )?( uv2_DistortionTex ):( uv_DistortionTex )) + ( appendResult25 * _TimeParameters.x ) ) ).rgb;
+				float desaturateDot32 = dot( desaturateInitialColor32, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar32 = lerp( desaturateInitialColor32, desaturateDot32.xxx, 1.0 );
 				half3 DistortionUV34 = desaturateVar32;
 				half DistortionIndeisty35 = _DistortionIntensity;
-				half3 lerpResult103 = lerp( half3( temp_output_96_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
-				half2 uv_OffsetMaskTex = input.ase_texcoord.xy * _OffsetMaskTex_ST.xy + _OffsetMaskTex_ST.zw;
-				half2 appendResult99 = (half2(( _OffsetMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetMaskTexV )));
-				half4 temp_output_116_0 = ( tex2D( _OffsetTex, (( _OffsetTexDistortionUV )?( lerpResult103 ):( half3( temp_output_96_0 ,  0.0 ) )).xy ) * tex2D( _OffsetMaskTex, ( uv_OffsetMaskTex + appendResult99 ) ) );
-				half3 desaturateInitialColor136 = temp_output_116_0.rgb;
-				half desaturateDot136 = dot( desaturateInitialColor136, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar136 = lerp( desaturateInitialColor136, desaturateDot136.xxx, 1.0 );
-				half2 uv_OpacityMaskTex = input.ase_texcoord.xy * _OpacityMaskTex_ST.xy + _OpacityMaskTex_ST.zw;
-				half2 appendResult100 = (half2(( _OpacityMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OpacityMaskTexV )));
-				half3 desaturateInitialColor118 = tex2D( _OpacityMaskTex, (( _OffsetMaskTexFrequencyToOpacityMaskTex )?( ( appendResult99 + uv_OpacityMaskTex ) ):( ( uv_OpacityMaskTex + appendResult100 ) )) ).rgb;
-				half desaturateDot118 = dot( desaturateInitialColor118, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar118 = lerp( desaturateInitialColor118, desaturateDot118.xxx, 1.0 );
-				half2 uv_AlphaTex1 = input.ase_texcoord.xy * _AlphaTex1_ST.xy + _AlphaTex1_ST.zw;
-				half2 appendResult113 = (half2(( _AlphaTex1U * _TimeParameters.x ) , ( _TimeParameters.x * _AlphaTex1V )));
-				half3 desaturateInitialColor120 = tex2D( _AlphaTex1, ( uv_AlphaTex1 + appendResult113 ) ).rgb;
-				half desaturateDot120 = dot( desaturateInitialColor120, float3( 0.299, 0.587, 0.114 ));
-				half3 desaturateVar120 = lerp( desaturateInitialColor120, desaturateDot120.xxx, 1.0 );
-				half clampResult141 = clamp( ( _MaskAddBias + ( (( _OpacityMaskTexSwitch )?( (desaturateVar118).x ):( (desaturateVar136).x )) * (desaturateVar120).x ) ) , 0.0 , 1.0 );
-				half temp_output_128_0 = (0.0 + (clampResult141 - 0.0) * (2.0 - 0.0) / (1.0 - 0.0));
+				float3 lerpResult103 = lerp( float3( temp_output_96_0 ,  0.0 ) , DistortionUV34 , DistortionIndeisty35);
+				float2 uv_OffsetMaskTex = input.ase_texcoord.xy * _OffsetMaskTex_ST.xy + _OffsetMaskTex_ST.zw;
+				float2 appendResult99 = (float2(( _OffsetMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OffsetMaskTexV )));
+				float4 temp_output_116_0 = ( tex2D( _OffsetTex, (( _OffsetTexDistortionUV )?( lerpResult103 ):( half3( temp_output_96_0 ,  0.0 ) )).xy ) * tex2D( _OffsetMaskTex, ( uv_OffsetMaskTex + appendResult99 ) ) );
+				float3 desaturateInitialColor136 = temp_output_116_0.rgb;
+				float desaturateDot136 = dot( desaturateInitialColor136, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar136 = lerp( desaturateInitialColor136, desaturateDot136.xxx, 1.0 );
+				float2 uv_OpacityMaskTex = input.ase_texcoord.xy * _OpacityMaskTex_ST.xy + _OpacityMaskTex_ST.zw;
+				float2 appendResult100 = (float2(( _OpacityMaskTexU * _TimeParameters.x ) , ( _TimeParameters.x * _OpacityMaskTexV )));
+				float3 desaturateInitialColor118 = tex2D( _OpacityMaskTex, (( _OffsetMaskTexFrequencyToOpacityMaskTex )?( ( appendResult99 + uv_OpacityMaskTex ) ):( ( uv_OpacityMaskTex + appendResult100 ) )) ).rgb;
+				float desaturateDot118 = dot( desaturateInitialColor118, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar118 = lerp( desaturateInitialColor118, desaturateDot118.xxx, 1.0 );
+				float2 uv_AlphaTex1 = input.ase_texcoord.xy * _AlphaTex1_ST.xy + _AlphaTex1_ST.zw;
+				float2 appendResult113 = (float2(( _AlphaTex1U * _TimeParameters.x ) , ( _TimeParameters.x * _AlphaTex1V )));
+				float3 desaturateInitialColor120 = tex2D( _AlphaTex1, ( uv_AlphaTex1 + appendResult113 ) ).rgb;
+				float desaturateDot120 = dot( desaturateInitialColor120, float3( 0.299, 0.587, 0.114 ));
+				float3 desaturateVar120 = lerp( desaturateInitialColor120, desaturateDot120.xxx, 1.0 );
+				float clampResult141 = clamp( ( _MaskAddBias + ( (( _OpacityMaskTexSwitch )?( (desaturateVar118).x ):( (desaturateVar136).x )) * (desaturateVar120).x ) ) , 0.0 , 1.0 );
+				float temp_output_128_0 = (0.0 + (clampResult141 - 0.0) * (2.0 - 0.0) / (1.0 - 0.0));
 				float4 screenPos = input.ase_texcoord1;
-				half4 ase_positionSSNorm = screenPos / screenPos.w;
+				float4 ase_positionSSNorm = screenPos / screenPos.w;
 				ase_positionSSNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_positionSSNorm.z : ase_positionSSNorm.z * 0.5 + 0.5;
-				half4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
-				half dither131 = Dither4x4Bayer( fmod( ase_positionSS_Pixel.x, 4 ), fmod( ase_positionSS_Pixel.y, 4 ) );
+				float4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
+				float dither131 = Dither4x4Bayer( fmod( ase_positionSS_Pixel.x, 4 ), fmod( ase_positionSS_Pixel.y, 4 ) );
 				dither131 = step( dither131, saturate( ( temp_output_128_0 + _DitherBias ) * 1.00001 ) );
 				
 
@@ -4865,7 +4865,7 @@ Node;AmplifyShaderEditor.ComponentMaskNode;122;-2194.594,957.4332;Inherit;True;T
 Node;AmplifyShaderEditor.ToggleSwitchNode;152;-1132.488,273.386;Half;False;Property;_OpacityMaskTexSwitch;OpacityMaskTexSwitch;26;0;Create;True;0;0;0;False;0;False;1;True;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.CommentaryNode;121;-703.012,201.6739;Inherit;False;718.0901;261.9537;Mask阈值加强;4;141;140;139;128;;1,1,1,1;0;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;124;-852.4344,280.8999;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;139;-653.0117,251.6738;Float;False;Property;_MaskAddBias;MaskAddBias;33;0;Create;True;0;0;0;False;0;False;0;0;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;139;-653.0117,251.6738;Float;False;Property;_MaskAddBias;MaskAddBias;33;0;Create;True;0;0;0;False;0;False;-0.5;0;0;0;0;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleAddOpNode;140;-463.5852,256.8763;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.ClampOpNode;141;-346.4585,257.6785;Inherit;False;3;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;1;False;1;FLOAT;0
 Node;AmplifyShaderEditor.CommentaryNode;125;67.79946,348.8331;Inherit;False;579.7141;189.3333;抖动控制;3;131;130;129;;1,1,1,1;0;0
@@ -5097,4 +5097,4 @@ WireConnection;161;5;9;0
 WireConnection;161;7;151;0
 WireConnection;161;8;127;0
 ASEEND*/
-//CHKSM=D5AEA47F92F1AF48F5C5AB4867C2FEBFC08024AB
+//CHKSM=38B8F17709FBF31295C6D0607CDE0A73AA5E4B01
